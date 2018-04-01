@@ -23,7 +23,7 @@ public class Dankmeme extends Command {
         this.description = "Gets the latest from /r/dankmemes";
         this.name = "Dankmeme";
         this.usage = ">dankmeme";
-        this.trigger = new Trigger(this, TriggerType.MESSAGE_SENT_CONTAINS, "dankmeme");
+        this.trigger = new Trigger(this, TriggerType.COMMAND, "dankmeme");
         this.trigger.messageType = MessageType.BOTH;
     }
 
@@ -40,7 +40,7 @@ public class Dankmeme extends Command {
         }
 
         if (link == "") {
-            Reply(Settings.prefix + "I couldnt find any memes sorry", event);
+            Reply(Settings.getInstance().prefix + "I couldnt find any memes sorry", event);
             return;
         }
 
@@ -71,7 +71,7 @@ public class Dankmeme extends Command {
             message = tmp.toString();
 
         } catch (IOException e) {
-            Reply(Settings.prefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
+            Reply(Settings.getInstance().prefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
             return null;
         }
 

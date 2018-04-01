@@ -20,7 +20,7 @@ public class ChickenBot extends ListenerAdapter{
 
         //Setup account
         JDABuilder builder = new JDABuilder(AccountType.BOT);
-        builder.setToken(Settings.getToken());
+        builder.setToken(Settings.getInstance().getToken());
         builder.setAutoReconnect(true);
         builder.setStatus(OnlineStatus.ONLINE);
 

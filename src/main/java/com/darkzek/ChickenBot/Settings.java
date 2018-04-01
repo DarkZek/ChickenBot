@@ -10,8 +10,8 @@ import java.util.Scanner;
  */
 public class Settings {
 
-    public static String enabler = ">";
-    public static String prefix = "Brawk!\n";
+    public String enabler = ">";
+    public String prefix = "Brawk!\n";
 
     private static Settings settings = new Settings( );
 
@@ -22,7 +22,7 @@ public class Settings {
         return settings;
     }
 
-    public static String getToken() {
+    public String getToken() {
         try {
             File file = new File("token.txt");
 
@@ -30,8 +30,6 @@ public class Settings {
             String token = scanner.nextLine();
             return token;
         } catch (FileNotFoundException e) {
-            NoToken();
-        } catch (IOException e) {
             NoToken();
         }
         return "";

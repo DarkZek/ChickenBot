@@ -21,6 +21,9 @@ public class CommandLoader {
         commands.add(new Search());
         commands.add(new UnixPorn());
         commands.add(new Dankmeme());
+        commands.add(new DONG());
+        commands.add(new Invite());
+        commands.add(new Raffle());
 
         ChickenBot.Log("Successfully loaded all plugins");
     }

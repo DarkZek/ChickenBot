@@ -65,7 +65,7 @@ public class Command {
             stream = url.openStream();
             ReplyImage(stream, event);
         } catch (IOException e) {
-            Reply(Settings.prefix + "Sorry I cant connect to the website right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
+            Reply(Settings.getInstance().prefix + "Sorry I cant connect to the website right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
             return;
         }
     }
@@ -89,7 +89,7 @@ public class Command {
             SendMessage(message, event.getTextChannel());
 
             //Only in guild chats because you cant delete messages from PM's
-            if (deleteMessage) {
+            if (deleteMessage && event.getChannelType() == ChannelType.TEXT) {
                 event.getMessage().delete().queue();
             }
         }

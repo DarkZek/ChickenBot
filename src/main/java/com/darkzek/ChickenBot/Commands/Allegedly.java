@@ -21,7 +21,7 @@ public class Allegedly extends Command {
 
     @Override
     public void MessageRecieved(MessageReceivedEvent event) {
-        if (new Random().nextInt(201) != 50) {
+        if (new Random().nextInt(401) != 50) {
             return;
         }
         Reply("***Allegedly***", event);

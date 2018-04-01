@@ -2,12 +2,15 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Reactions;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -31,17 +34,17 @@ public class Purge extends Command {
         String[] args = event.getMessage().getContentRaw().split(" ");
 
         if (args.length <= 1) {
-            SendMessage(Settings.prefix + "What are you doing!", event.getTextChannel());
+            SendMessage(Settings.getInstance().prefix + "You forgot the amount of messages!", event.getTextChannel());
             return;
         }
 
         if (event.getGuild() == null) {
-            PrivateMessage(Settings.prefix + "What are you doing!", event.getAuthor());
+            PrivateMessage(Settings.getInstance().prefix + "What are you doing!", event.getAuthor());
             return;
         }
 
         if (!event.getGuild().getMember(event.getAuthor()).hasPermission(Permission.MANAGE_CHANNEL)) {
-            SendMessage(Settings.prefix + "What are you doing!", event.getTextChannel());
+            SendMessage(Settings.getInstance().prefix + "What are you doing!", event.getTextChannel());
             return;
         }
 
@@ -49,11 +52,27 @@ public class Purge extends Command {
         try {
             num = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            SendMessage(Settings.prefix + " You forgot the amount of messages", event.getTextChannel());
+            SendMessage(Settings.getInstance().prefix + " You forgot the amount of messages", event.getTextChannel());
+            return;
+        }
+
+        if (num > 100) {
+            Reply(Settings.getInstance().prefix + "Due to Discord's limitations I cannot purge more than 100 messages at a time", event);
+            return;
+        }
+
+        if (num < 1) {
+            ReplyImage(Reactions.GetRandom(Reactions.getInstance().whatAreYouDoing), event);
             return;
         }
 
         List<Message> test = event.getTextChannel().getHistory().retrievePast(num).complete();
-        event.getTextChannel().deleteMessages(test).queue();
+        try {
+            event.getTextChannel().deleteMessages(test).queue();
+            return;
+        } catch (InsufficientPermissionException e) {
+            Reply(Settings.getInstance().prefix + "I dont have permissions! Please add permission `MESSAGE_MANAGE` to use this feature", event);
+            return;
+        }
     }
 }

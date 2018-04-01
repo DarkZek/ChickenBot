@@ -29,7 +29,7 @@ public class Help extends Command {
 
         String[] args = event.getMessage().getContentRaw().split(" ");
 
-        String message = Settings.prefix + "```";
+        String message = Settings.getInstance().prefix + "```";
 
         if (args.length > 1) {
             //User wants to get help about a specific command

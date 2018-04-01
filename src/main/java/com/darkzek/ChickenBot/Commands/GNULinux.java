@@ -51,7 +51,7 @@ public class GNULinux extends Command {
             return;
         }
 
-        String message = Settings.prefix + event.getAuthor().getAsMention() + " \n" + linuxMeme;
+        String message = Settings.getInstance().prefix + event.getAuthor().getAsMention() + " \n" + linuxMeme;
         Reply(message, event);
     }
 }

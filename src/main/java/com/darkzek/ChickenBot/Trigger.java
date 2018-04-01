@@ -62,20 +62,20 @@ public class Trigger {
             msgType = MessageType.PRIVATE;
         }
 
-        //Check if the command should even run for this type of message
-        if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
-            return;
-        }
-
         if (ignoreCase) {
             message = message.toLowerCase();
         }
 
         if (type == TriggerType.COMMAND) {
+            //Check if the command should even run for this type of message
+            if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
+                command.Reply(Settings.getInstance().prefix + "You cant use this command in this channel type!", event);
+                return;
+            }
             String m = event.getMessage().getContentStripped();
             if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
                 //Check if the message contains the correct phrase
-                if (!message.startsWith(Settings.enabler)) {
+                if (!message.startsWith(Settings.getInstance().enabler)) {
                     return;
                 }
                 m = m.substring(1);
@@ -89,6 +89,11 @@ public class Trigger {
             if (!m.startsWith(arg)) {
                 return;
             }
+        }
+
+        //Check if the command should even run for this type of message
+        if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
+            return;
         }
 
         command.MessageRecieved(event);

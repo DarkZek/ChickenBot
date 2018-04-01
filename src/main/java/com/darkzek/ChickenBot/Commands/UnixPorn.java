@@ -23,7 +23,7 @@ public class UnixPorn extends Command {
         this.description = "Gets the latest from /r/unixporn";
         this.name = "UnixPorn";
         this.usage = ">unixporn";
-        this.trigger = new Trigger(this, TriggerType.MESSAGE_SENT_CONTAINS, "unixporn");
+        this.trigger = new Trigger(this, TriggerType.COMMAND, "unixporn");
         this.trigger.messageType = MessageType.BOTH;
     }
 
@@ -44,7 +44,7 @@ public class UnixPorn extends Command {
         }
 
         if (image == "") {
-            Reply(Settings.prefix + "I couldnt find any images sorry", event);
+            Reply(Settings.getInstance().prefix + "I couldnt find any images sorry", event);
             return;
         }
 
@@ -68,7 +68,7 @@ public class UnixPorn extends Command {
             message = tmp.toString();
 
         } catch (IOException e) {
-            Reply(Settings.prefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
+            Reply(Settings.getInstance().prefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
             return null;
         }
 
@@ -76,6 +76,7 @@ public class UnixPorn extends Command {
 
         int postNumber = new Random().nextInt(10);
 
+        //I need to find a better way of doing this, its crappy
         String url = json.getJSONObject("data").getJSONArray("children").getJSONObject(postNumber).getJSONObject("data").getString("url");
 
         return url;
