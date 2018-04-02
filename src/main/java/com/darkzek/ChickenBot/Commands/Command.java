@@ -105,7 +105,7 @@ public class Command {
         channel.sendMessage(message).queue();
     }
     public void PrivateMessageImage(InputStream message, User user) {
-        if (user.hasPrivateChannel()) {
+        if (user.hasPrivateChannel() && user != user.getJDA().getSelfUser()) {
             user.openPrivateChannel().queue();
         }
 

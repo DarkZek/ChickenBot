@@ -67,11 +67,6 @@ public class Trigger {
         }
 
         if (type == TriggerType.COMMAND) {
-            //Check if the command should even run for this type of message
-            if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
-                command.Reply(Settings.getInstance().prefix + "You cant use this command in this channel type!", event);
-                return;
-            }
             String m = event.getMessage().getContentStripped();
             if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
                 //Check if the message contains the correct phrase
@@ -93,6 +88,12 @@ public class Trigger {
 
         //Check if the command should even run for this type of message
         if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
+            return;
+        }
+
+        //Check if the command should even run for this type of message
+        if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
+            command.Reply(Settings.getInstance().prefix + "You cant use this command in this channel type!", event);
             return;
         }
 
