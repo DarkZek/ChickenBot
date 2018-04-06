@@ -12,8 +12,6 @@ import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-import java.util.Set;
-
 public class CustomGuildCommand extends Command {
 
     public CustomGuildCommand() {
