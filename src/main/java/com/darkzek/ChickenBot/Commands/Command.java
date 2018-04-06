@@ -18,13 +18,13 @@ import java.net.URL;
  * Created by darkzek on 28/02/18.
  */
 public class Command {
-    String description;
-    String name;
-    String usage;
-    CommandType type;
-    Trigger trigger;
-    String[] alias;
-    boolean showInHelp = true;
+    public String description;
+    public String name;
+    public String usage;
+    public CommandType type;
+    public Trigger trigger;
+    public String[] alias;
+    public boolean showInHelp = true;
 
     public void MessageRecieved(MessageReceivedEvent event) {
         Log("[ERROR] Unhandled message received event for command " + name);

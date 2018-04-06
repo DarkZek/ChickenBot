@@ -19,6 +19,7 @@ public class Raffle extends Command {
         this.name = "Raffle";
         this.usage = ">raffle";
         this.trigger = new Trigger(this, TriggerType.COMMAND, "raffle");
+        this.trigger.SetIgnoreCase(true);
     }
 
     @Override

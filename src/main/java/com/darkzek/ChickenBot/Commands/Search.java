@@ -16,7 +16,7 @@ public class Search extends Command {
         this.description = "Let me google that for you";
         this.name = "Search";
         this.type = CommandType.INTERNET;
-        this.usage = ">LMGTFY <search_term>";
+        this.usage = ">search <search_term>";
         this.trigger = new Trigger(this, TriggerType.COMMAND, "search");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.BOTH;

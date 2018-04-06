@@ -1,6 +1,8 @@
 package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.ChickenBot;
+import com.darkzek.ChickenBot.Commands.GuildsCommands.CustomGuildCommand;
+import com.darkzek.ChickenBot.Commands.GuildsCommands.GuildCommandExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,8 @@ public class CommandLoader {
         commands.add(new DONG());
         commands.add(new Invite());
         commands.add(new Raffle());
+        commands.add(new CustomGuildCommand());
+        commands.add(new GuildCommandExecutor());
 
         ChickenBot.Log("Successfully loaded all plugins");
     }

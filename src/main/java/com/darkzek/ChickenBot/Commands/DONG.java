@@ -26,7 +26,7 @@ public class DONG extends Command {
         this.description = "What can you Do Online Now Guys?";
         this.name = "DONG";
         this.type = CommandType.INTERNET;
-        this.usage = ">DONG";
+        this.usage = ">dong";
         this.trigger = new Trigger(this, TriggerType.COMMAND, "dong");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.BOTH;

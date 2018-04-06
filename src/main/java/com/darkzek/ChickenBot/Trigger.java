@@ -66,8 +66,11 @@ public class Trigger {
             message = message.toLowerCase();
         }
 
+
         if (type == TriggerType.COMMAND) {
+            //Get message content
             String m = event.getMessage().getContentStripped();
+            //Check if it uses  the command prefix or tags us
             if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
                 //Check if the message contains the correct phrase
                 if (!message.startsWith(Settings.getInstance().enabler)) {
@@ -80,6 +83,9 @@ public class Trigger {
                     return;
                 }
                 m = m.substring(index);
+            }
+            if (ignoreCase) {
+                m = m.toLowerCase();
             }
             if (!m.startsWith(arg)) {
                 return;
