@@ -42,24 +42,23 @@ public class ChickenBot extends ListenerAdapter{
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            //Disconnect
             jda.shutdown();
         }));
 
         if (!runningFromIntelliJ()) {
-            TellMe();
+            TellMe("Started ChickenBot with version " + new Version().getVersion());
         }
 
         Log("Started Chicken Bot V1");
     }
 
-    public static void TellMe() {
+    public static void TellMe(String message) {
         User darkzek = jda.getUserById("130173614702985216");
 
         PrivateChannel pc = darkzek.openPrivateChannel().complete();
-        System.out.println("Sent message");
 
-        pc.sendMessage("Started ChickenBot with version " + new Version().getVersion()).queue();
+        pc.sendMessage(message).queue();
+        System.out.println("Sent message");
     }
 
     public static void Log(String s) {

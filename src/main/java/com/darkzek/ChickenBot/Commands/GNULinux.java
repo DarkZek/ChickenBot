@@ -7,6 +7,8 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Random;
+
 /**
  * Created by darkzek on 28/02/18.
  */
@@ -48,6 +50,11 @@ public class GNULinux extends Command {
         String msg = event.getMessage().getContentRaw().toLowerCase().replace("/", "").replaceAll(" ", "").replaceAll("gnulinux", "");
 
         if (!msg.contains("linux")) {
+            return;
+        }
+
+        //Make is only happen every 1 in 20 messages
+        if (new Random().nextInt(20) != 15) {
             return;
         }
 
