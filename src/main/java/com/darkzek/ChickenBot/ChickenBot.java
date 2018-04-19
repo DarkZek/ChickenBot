@@ -10,6 +10,9 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  * Created by darkzek on 21/02/18.
@@ -19,6 +22,18 @@ public class ChickenBot extends ListenerAdapter{
     public static JDA jda;
 
     public static void main(String[] args) {
+
+        //Setup logging
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream("latest.txt"));
+            System.setOut(out);
+            System.setErr(out);
+        } catch (IOException e) {
+
+        }
+
+        //Setup error listener
+        ExceptionTracker.registerExceptionHandler();
 
         //Setup account
         JDABuilder builder = new JDABuilder(AccountType.BOT);
@@ -49,7 +64,7 @@ public class ChickenBot extends ListenerAdapter{
             TellMe("Started ChickenBot with version " + new Version().getVersion());
         }
 
-        Log("Started Chicken Bot V1");
+        System.out.println("Started Chicken Bot V1");
     }
 
     public static void TellMe(String message) {
@@ -58,11 +73,6 @@ public class ChickenBot extends ListenerAdapter{
         PrivateChannel pc = darkzek.openPrivateChannel().complete();
 
         pc.sendMessage(message).queue();
-        System.out.println("Sent message");
-    }
-
-    public static void Log(String s) {
-        System.out.println(s);
     }
 
     public static boolean runningFromIntelliJ()

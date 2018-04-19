@@ -30,6 +30,6 @@ public class CommandLoader {
         commands.add(new GuildCommandExecutor());
         commands.add(new Source());
 
-        ChickenBot.Log("Successfully loaded all plugins");
+        System.out.println("Successfully loaded all plugins");
     }
 }
