@@ -5,6 +5,7 @@ import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Trigger {
     String arg;
     Command command;
     boolean includeBots = false;
-    boolean ignoreCase = false;
+    boolean ignoreCase = true;
     public MessageType messageType = MessageType.GUILD;
 
     public Trigger(Command command, List<TriggerType> type) {

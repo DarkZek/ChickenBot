@@ -26,6 +26,7 @@ public class UnixPorn extends Command {
         this.usage = ">unixporn";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "unixporn");
         this.trigger.messageType = MessageType.BOTH;
+
     }
 
     @Override

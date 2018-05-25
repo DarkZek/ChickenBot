@@ -1,5 +1,6 @@
 package com.darkzek.ChickenBot.Commands;
 
+import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
@@ -18,6 +19,7 @@ public class Emote extends Command {
         this.name = "Emote";
         this.usage = ">emote <emote_name>";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND, TriggerType.BOT_SHUTDOWN), "emote");
+        this.trigger.messageType = MessageType.BOTH;
 
         //Load emotes
         LoadEmotes();
