@@ -7,6 +7,8 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
+
 /**
  * Created by darkzek on 31/03/18.
  */
@@ -18,7 +20,7 @@ public class Invite extends Command{
         this.name = "Invite";
         this.type = CommandType.ADMINISTRATION;
         this.usage = ">invite";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "invite");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "invite");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.BOTH;
     }

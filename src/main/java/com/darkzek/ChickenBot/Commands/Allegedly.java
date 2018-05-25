@@ -4,6 +4,8 @@ import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -16,12 +18,12 @@ public class Allegedly extends Command {
         this.name = "Allegedly";
         this.showInHelp = false;
         this.usage = "Happens approximately once every 200 messages";
-        this.trigger = new Trigger(this, TriggerType.MESSAGE_SENT);
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.MESSAGE_SENT));
     }
 
     @Override
     public void MessageRecieved(MessageReceivedEvent event) {
-        if (new Random().nextInt(401) != 50) {
+        if (new Random().nextInt(4001) != 50) {
             return;
         }
         Reply("***Allegedly***", event);

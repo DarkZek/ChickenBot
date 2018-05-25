@@ -7,6 +7,8 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
+
 /**
  * Created by darkzek on 28/02/18.
  */
@@ -17,7 +19,7 @@ public class Search extends Command {
         this.name = "Search";
         this.type = CommandType.INTERNET;
         this.usage = ">search <search_term>";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "search");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "search");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.BOTH;
     }

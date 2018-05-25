@@ -15,22 +15,15 @@ public class CommandManager extends ListenerAdapter {
 
     private static CommandManager commandManager = new CommandManager( );
 
-    List<Trigger> messageTriggers = new ArrayList<>();
-    List<Trigger> deletedTriggers = new ArrayList<>();
+    public List<Trigger> messageTriggers = new ArrayList<>();
+    public List<Trigger> deletedTriggers = new ArrayList<>();
+    public List<Trigger> shutdownTriggers = new ArrayList<>();
 
     private CommandManager() {}
 
     /* Static 'instance' method */
     public static CommandManager getInstance( ) {
         return commandManager;
-    }
-
-    public void AddMessageListener(Trigger trigger) {
-        messageTriggers.add(trigger);
-    }
-
-    public void AddMessageDeletedListener(Trigger trigger) {
-        deletedTriggers.add(trigger);
     }
 
     @Override
@@ -46,6 +39,12 @@ public class CommandManager extends ListenerAdapter {
     {
         for(Trigger trigger : messageTriggers) {
             trigger.MessageRecieved(event);
+        }
+    }
+
+    public void onShutdown() {
+        for (Trigger trigger : shutdownTriggers) {
+            trigger.Shutdown();
         }
     }
 }

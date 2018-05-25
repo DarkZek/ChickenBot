@@ -9,7 +9,7 @@ public class ExceptionTracker implements Thread.UncaughtExceptionHandler {
     public void handle(Throwable throwable) {
         try {
             // insert your e-mail code here
-            System.out.println("Error!");
+            System.out.println("Error!\n" + throwable.fillInStackTrace());
             ChickenBot.TellMe("Hey man, we just blew a fuse!\n\nStacktrace:```" + throwable.fillInStackTrace() + "```");
         } catch (Throwable t) {
             // don't let the exception get thrown out, will cause infinite looping!

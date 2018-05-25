@@ -12,6 +12,8 @@ import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
+
 public class CustomGuildCommand extends Command {
 
     public CustomGuildCommand() {
@@ -19,7 +21,7 @@ public class CustomGuildCommand extends Command {
         this.name = "GuildCommand";
         this.type = CommandType.ADMINISTRATION;
         this.usage = ">guildcommand <command_name> <message_to_send>";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "guildcommand");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "guildcommand");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.GUILD;
     }

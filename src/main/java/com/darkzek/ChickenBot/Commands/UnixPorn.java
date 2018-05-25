@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -23,7 +24,7 @@ public class UnixPorn extends Command {
         this.description = "Gets the latest from /r/unixporn";
         this.name = "UnixPorn";
         this.usage = ">unixporn";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "unixporn");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "unixporn");
         this.trigger.messageType = MessageType.BOTH;
     }
 

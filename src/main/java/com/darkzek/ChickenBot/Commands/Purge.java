@@ -1,6 +1,7 @@
 package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.CommandType;
+import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Reactions;
 import com.darkzek.ChickenBot.Settings;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,9 +26,10 @@ public class Purge extends Command {
         this.name = "Purge";
         this.type = CommandType.ADMINISTRATION;
         this.usage = ">PURGE <amount>";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "purge");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "purge");
         this.trigger.SetIgnoreCase(true);
         this.trigger.IncludeBots(true);
+        this.trigger.messageType = MessageType.GUILD;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class Purge extends Command {
             event.getTextChannel().deleteMessages(test).queue();
             return;
         } catch (InsufficientPermissionException e) {
-            Reply(Settings.getInstance().prefix + "I dont have permissions! Please add permission `MESSAGE_MANAGE` to use this feature", event);
+            Reply(Settings.getInstance().prefix + "I don't have permissions! Please add permission `MESSAGE_MANAGE` to use this feature", event);
             return;
         }
     }

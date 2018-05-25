@@ -7,6 +7,8 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
+
 /**
  * Created by darkzek on 28/02/18.
  */
@@ -17,7 +19,7 @@ public class Help extends Command {
         this.name = "Help";
         this.type = CommandType.ADMINISTRATION;
         this.usage = ">help <command>";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "help");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "help");
         this.trigger.SetIgnoreCase(true);
         this.trigger.IncludeBots(true);
         this.trigger.messageType = MessageType.BOTH;

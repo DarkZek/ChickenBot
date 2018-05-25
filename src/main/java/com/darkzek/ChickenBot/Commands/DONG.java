@@ -10,10 +10,7 @@ import org.omg.CORBA.Environment;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by darkzek on 31/03/18.
@@ -27,7 +24,7 @@ public class DONG extends Command {
         this.name = "DONG";
         this.type = CommandType.INTERNET;
         this.usage = ">dong";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "dong");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "dong");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.BOTH;
 

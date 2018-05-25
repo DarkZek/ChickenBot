@@ -1,6 +1,5 @@
 package com.darkzek.ChickenBot.Commands;
 
-import com.darkzek.ChickenBot.ChickenBot;
 import com.darkzek.ChickenBot.Commands.GuildsCommands.CustomGuildCommand;
 import com.darkzek.ChickenBot.Commands.GuildsCommands.GuildCommandExecutor;
 
@@ -29,6 +28,8 @@ public class CommandLoader {
         commands.add(new CustomGuildCommand());
         commands.add(new GuildCommandExecutor());
         commands.add(new Source());
+        commands.add(new BigText());
+        commands.add(new Emote());
 
         System.out.println("Successfully loaded all plugins");
     }

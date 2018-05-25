@@ -6,24 +6,26 @@ import com.darkzek.ChickenBot.Enums.TriggerType;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.List;
+
 /**
  * Created by darkzek on 28/02/18.
  */
 public class Trigger {
-    TriggerType type;
+    List<TriggerType> type;
     String arg;
     Command command;
     boolean includeBots = false;
     boolean ignoreCase = false;
     public MessageType messageType = MessageType.GUILD;
 
-    public Trigger(Command command, TriggerType type) {
-        this.type = type;
+    public Trigger(Command command, List<TriggerType> type) {
+        this.type = type ;
         this.command = command;
         Setup();
     }
 
-    public Trigger(Command command, TriggerType type, String argument) {
+    public Trigger(Command command, List<TriggerType> type, String argument) {
         this.type = type;
         arg = argument;
         this.command = command;
@@ -48,7 +50,7 @@ public class Trigger {
             return;
         }
 
-        if (type == TriggerType.MESSAGE_SENT_CONTAINS) {
+        if (type.contains(TriggerType.MESSAGE_SENT_CONTAINS)) {
             //Check if the message contains the correct phrase
             if (!message.contains(arg)) {
                 return;
@@ -67,7 +69,7 @@ public class Trigger {
         }
 
 
-        if (type == TriggerType.COMMAND) {
+        if (type.contains(TriggerType.COMMAND)) {
             //Get message content
             String m = event.getMessage().getContentStripped();
             //Check if it uses  the command prefix or tags us
@@ -106,28 +108,39 @@ public class Trigger {
         command.MessageRecieved(event);
     }
 
+    public void Shutdown() {
+        command.OnShutdown();
+    }
+
     public void MessageDeleted(MessageDeleteEvent event) {
         command.MessageDeleted(event);
     }
 
     public void Setup() {
-        //Let the command manager know there's another command
-        switch (type) {
-            case MESSAGE_SENT: {
-                CommandManager.getInstance().AddMessageListener(this);
-                break;
-            }
-            case MESSAGE_SENT_CONTAINS: {
-                CommandManager.getInstance().AddMessageListener(this);
-                break;
-            }
-            case COMMAND: {
-                CommandManager.getInstance().AddMessageListener(this);
-                break;
-            }
-            case MESSAGE_DELETED: {
-                CommandManager.getInstance().AddMessageDeletedListener(this);
-                break;
+        //Let the command manager know what we're listening for
+
+        for (TriggerType tType : type) {
+            switch (tType) {
+                case MESSAGE_SENT: {
+                    CommandManager.getInstance().messageTriggers.add(this);
+                    break;
+                }
+                case MESSAGE_SENT_CONTAINS: {
+                    CommandManager.getInstance().messageTriggers.add(this);
+                    break;
+                }
+                case COMMAND: {
+                    CommandManager.getInstance().messageTriggers.add(this);
+                    break;
+                }
+                case MESSAGE_DELETED: {
+                    CommandManager.getInstance().deletedTriggers.add(this);
+                    break;
+                }
+                case BOT_SHUTDOWN: {
+                    CommandManager.getInstance().shutdownTriggers.add(this);
+                    break;
+                }
             }
         }
     }

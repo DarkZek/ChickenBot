@@ -24,12 +24,14 @@ public class ChickenBot extends ListenerAdapter{
     public static void main(String[] args) {
 
         //Setup logging
-        try {
-            PrintStream out = new PrintStream(new FileOutputStream("latest.txt"));
-            System.setOut(out);
-            System.setErr(out);
-        } catch (IOException e) {
+        if (!runningFromIntelliJ()) {
+            try {
+                PrintStream out = new PrintStream(new FileOutputStream("latest.txt"));
+                System.setOut(out);
+                System.setErr(out);
+            } catch (IOException e) {
 
+            }
         }
 
         //Setup error listener
@@ -57,6 +59,7 @@ public class ChickenBot extends ListenerAdapter{
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            CommandManager.getInstance().onShutdown();
             jda.shutdown();
         }));
 

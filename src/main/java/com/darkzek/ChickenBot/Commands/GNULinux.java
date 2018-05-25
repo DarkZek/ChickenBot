@@ -7,6 +7,7 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -40,7 +41,7 @@ public class GNULinux extends Command {
         this.type = CommandType.FUN;
         this.showInHelp = false;
         this.usage = "Whenever linux is said";
-        this.trigger = new Trigger(this, TriggerType.MESSAGE_SENT_CONTAINS, "linux");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.MESSAGE_SENT_CONTAINS), "linux");
         this.trigger.SetIgnoreCase(true);
         this.trigger.messageType = MessageType.BOTH;
     }

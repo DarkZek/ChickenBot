@@ -10,13 +10,15 @@ import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
+
 public class GuildCommandExecutor extends Command {
 
     private GuildManager manager;
 
     public GuildCommandExecutor() {
         this.showInHelp = false;
-        this.trigger = new Trigger(this, TriggerType.MESSAGE_SENT);
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.MESSAGE_SENT));
         this.trigger.messageType = MessageType.GUILD;
 
         manager = GuildManager.getInstance();

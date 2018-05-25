@@ -8,5 +8,6 @@ public enum TriggerType {
     MESSAGE_SENT,
     MESSAGE_DELETED,
     CONTAINS_PREFIX,
-    COMMAND
+    COMMAND,
+    BOT_SHUTDOWN
 }

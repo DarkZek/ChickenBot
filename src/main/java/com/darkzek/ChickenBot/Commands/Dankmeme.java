@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -23,7 +24,7 @@ public class Dankmeme extends Command {
         this.description = "Gets the latest from /r/dankmemes";
         this.name = "Dankmeme";
         this.usage = ">dankmeme";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "dankmeme");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "dankmeme");
         this.trigger.messageType = MessageType.BOTH;
     }
 

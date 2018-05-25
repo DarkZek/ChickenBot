@@ -6,6 +6,7 @@ import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -18,7 +19,7 @@ public class Raffle extends Command {
         this.description = "Gets a random user from a channel";
         this.name = "Raffle";
         this.usage = ">raffle";
-        this.trigger = new Trigger(this, TriggerType.COMMAND, "raffle");
+        this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "raffle");
         this.trigger.SetIgnoreCase(true);
     }
 

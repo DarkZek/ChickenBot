@@ -34,6 +34,10 @@ public class Command {
         Log("[ERROR] Unhandled message deleted event for command " + name);
     }
 
+    public void OnShutdown() {
+
+    }
+
     private static void Log(String s) {
         System.out.println(s);
     }
@@ -113,4 +117,6 @@ public class Command {
 
         channel.sendFile(message, "File.png").queue();
     }
+
+
 }
