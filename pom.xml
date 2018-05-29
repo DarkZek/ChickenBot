@@ -6,7 +6,7 @@
 
     <groupId>ChickenBot</groupId>
     <artifactId>ChickenBot</artifactId>
-    <version>1.13</version>
+    <version>1.131</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>

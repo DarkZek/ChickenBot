@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -66,6 +67,8 @@ public class ChickenBot extends ListenerAdapter{
         if (!runningFromIntelliJ()) {
             TellMe("Started ChickenBot with version " + new Version().getVersion());
         }
+
+        jda.getPresence().setGame(Game.playing(">help | " + jda.getGuilds().size() + " servers"));
 
         System.out.println("Started Chicken Bot V1");
     }
