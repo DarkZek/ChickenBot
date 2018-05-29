@@ -32,7 +32,7 @@ public class Dankmeme extends Command {
     public void MessageRecieved(MessageReceivedEvent event) {
         String link = "";
         int times = 0;
-        while (times < 4) {
+        while (times < 10) {
             link = GetRandomPost(event);
             if (link == null) {
                 break;
@@ -46,12 +46,7 @@ public class Dankmeme extends Command {
         }
 
 
-        if (link.endsWith("jpg") || link.endsWith("png")) {
-            //its an image
-            ReplyImage(link, event);
-        } else {
-            Reply(link, event);
-        }
+        Reply(link, event);
 
     }
 
@@ -60,7 +55,7 @@ public class Dankmeme extends Command {
         String message = "";
         //Connect to reddit
         try {
-            URL url = new URL("https://www.reddit.com/r/dankmeme/random.json");
+            URL url = new URL("https://www.reddit.com/r/MemeEconomy/random.json");
             HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setRequestProperty("User-agent", "Chicken-Bot");
             String line = null;
@@ -81,7 +76,13 @@ public class Dankmeme extends Command {
 
         JSONObject json = new JSONObject(message);
 
-        String url = json.getJSONArray("data").getJSONObject(0).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data").getString("url");
+        JSONObject data = json.getJSONArray("data").getJSONObject(0).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
+
+        if (data.getInt("score") > 50) {
+            return "";
+        }
+
+        String url = data.getString("url");
 
         return url;
     }

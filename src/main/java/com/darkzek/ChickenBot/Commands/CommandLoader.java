@@ -30,6 +30,7 @@ public class CommandLoader {
         commands.add(new Source());
         commands.add(new BigText());
         commands.add(new Emote());
+        commands.add(new Chat());
 
         System.out.println("Successfully loaded all plugins");
     }
