@@ -47,7 +47,7 @@ public class Chat extends Command {
     public void MessageRecieved(MessageReceivedEvent event) {
 
         if (!event.getMessage().isMentioned(event.getJDA().getSelfUser()) && !event.getMessage().mentionsEveryone()) {
-            //If they use the work chicken it has a 1/10 chance
+            //If they use the word chicken it has a 1/10 chance
             if (!(event.getMessage().getContentDisplay().toLowerCase().contains("chicken")
                     && new Random().nextInt(10) == 1)) {
                 return;

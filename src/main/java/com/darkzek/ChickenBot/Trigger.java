@@ -47,6 +47,10 @@ public class Trigger {
     public void MessageRecieved(MessageReceivedEvent event) {
         String message = event.getMessage().getContentRaw();
 
+        if (event.getAuthor() == event.getJDA().getSelfUser()) {
+            return;
+        }
+
         if (!includeBots && event.getAuthor().isBot()) {
             return;
         }
@@ -106,7 +110,27 @@ public class Trigger {
             return;
         }
 
-        command.MessageRecieved(event);
+        //try {
+            command.MessageRecieved(event);
+        //} catch (Exception e) {
+            //OnError(e, event);
+        //}
+    }
+
+    private void OnError(Exception e, MessageReceivedEvent message) {
+        command.Reply("We just blew a fuse!\nStacktrace: ```" + e.fillInStackTrace() + "\n" + StacktraceToString(e) + "```Please report this to DarkZek#8647", message);
+    }
+
+    private String StacktraceToString(Exception e) {
+        StackTraceElement[] stack = e.getStackTrace();
+
+        String m = "";
+
+        for (StackTraceElement stackTraceElement:stack) {
+            m += stackTraceElement.toString() + "\n";
+        }
+
+        return m;
     }
 
     public void Shutdown() {

@@ -61,7 +61,7 @@ public class Help extends Command {
                 }
             }
         }
-        message += "```";
+        message += "\nCreated by DarkZek#8647. PM me for any feature requests or bug reports :)```";
 
         PrivateMessage(message, event.getAuthor());
     }

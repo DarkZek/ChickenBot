@@ -1,5 +1,6 @@
 package com.darkzek.ChickenBot.Commands;
 
+import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
@@ -20,6 +21,7 @@ public class BigText extends Command {
         this.name = "Big Text";
         this.usage = ">bigtext <input words>";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "bigtext");
+        this.trigger.messageType = MessageType.BOTH;
     }
 
     @Override

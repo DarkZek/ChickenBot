@@ -68,6 +68,9 @@ public class ChickenBot extends ListenerAdapter{
             TellMe("Started ChickenBot with version " + new Version().getVersion());
         }
 
+        //Add the events listner to listen for stuff
+        jda.addEventListener(new EventsListener());
+
         jda.getPresence().setGame(Game.playing(">help | " + jda.getGuilds().size() + " servers"));
 
         System.out.println("Started Chicken Bot V1");
