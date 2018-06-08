@@ -23,6 +23,7 @@ public class Allegedly extends Command {
 
     @Override
     public void MessageRecieved(MessageReceivedEvent event) {
+
         if (new Random().nextInt(4001) != 50) {
             return;
         }

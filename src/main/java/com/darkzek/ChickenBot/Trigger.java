@@ -110,11 +110,11 @@ public class Trigger {
             return;
         }
 
-        //try {
+        try {
             command.MessageRecieved(event);
-        //} catch (Exception e) {
-            //OnError(e, event);
-        //}
+        } catch (Exception e) {
+            OnError(e, event);
+        }
     }
 
     private void OnError(Exception e, MessageReceivedEvent message) {

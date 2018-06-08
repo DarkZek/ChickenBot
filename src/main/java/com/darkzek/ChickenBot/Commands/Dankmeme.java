@@ -2,11 +2,17 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.RedditPost;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,37 +36,29 @@ public class Dankmeme extends Command {
 
     @Override
     public void MessageRecieved(MessageReceivedEvent event) {
-        String link = "";
-        int times = 0;
-        while (times < 4) {
-            link = GetRandomPost(event);
-            if (link == null) {
+        RedditPost post;
+
+        while (true) {
+            post = GetRandomPost(event);
+            if (post != null) {
                 break;
             }
-            times++;
         }
 
-        if (link == "") {
-            Reply(Settings.getInstance().prefix + "I couldnt find any memes sorry", event);
-            return;
-        }
-
-
-        if (link.endsWith("jpg") || link.endsWith("png")) {
-            //its an image
-            ReplyImage(link, event);
-        } else {
-            Reply(link, event);
-        }
-
+        event.getChannel().sendMessage(new EmbedBuilder()
+                .setTitle(post.title, null)
+                .setColor(Color.BLUE)
+                .setFooter(post.upvotes + " upvotes", null)
+                .setImage(post.imageLink)
+                .build()).queue();
     }
 
-    public String GetRandomPost(MessageReceivedEvent event) {
+    public RedditPost GetRandomPost(MessageReceivedEvent event) {
 
         String message = "";
         //Connect to reddit
         try {
-            URL url = new URL("https://www.reddit.com/r/dankmeme/random.json");
+            URL url = new URL("https://www.reddit.com/user/kerdaloo/m/dankmemer/top/.json?sort=top&t=day&limit=100");
             HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setRequestProperty("User-agent", "Chicken-Bot");
             String line = null;
@@ -76,13 +74,17 @@ public class Dankmeme extends Command {
             return null;
         }
 
-        //Fix json because reddit dosent like json objects
-        message = "{\"data\":" + message + "}";
-
         JSONObject json = new JSONObject(message);
 
-        String url = json.getJSONArray("data").getJSONObject(0).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data").getString("url");
+        JSONObject data = json.getJSONObject("data").getJSONArray("children").getJSONObject(new Random().nextInt(100)).getJSONObject("data");
 
-        return url;
+        //Get the data
+        int upvotes = data.getInt("score");
+        String link = data.getString("url");
+        String title = data.getString("title");
+
+        RedditPost post = new RedditPost(upvotes, link, title);
+
+        return post;
     }
 }
