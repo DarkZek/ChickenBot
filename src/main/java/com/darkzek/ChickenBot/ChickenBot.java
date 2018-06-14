@@ -20,6 +20,9 @@ import java.io.PrintStream;
  */
 public class ChickenBot extends ListenerAdapter{
 
+    //TODO: Add distance conversion command
+    //TODO: Add RemindMe functionality
+
     public static JDA jda;
 
     public static void main(String[] args) {
