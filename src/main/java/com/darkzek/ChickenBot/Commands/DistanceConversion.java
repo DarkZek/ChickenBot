@@ -64,13 +64,14 @@ public class DistanceConversion extends Command {
         activators[4] = new String[] {"inches", "\"", "inch"};
         activators[5] = new String[] {"feet", "foot"};
         activators[6] = new String[] {"yards", "yard"};
-        activators[7] = new String[] {"miles"};
+        activators[7] = new String[] {"miles", "mile"};
     }
 
     @Override
     public void MessageRecieved(MessageReceivedEvent event) {
 
         GuildConfiguration config = manager.GetGuildConfiguration(event.getGuild().getId() + "");
+
         String configName = "DistanceConversion.enabled";
 
         if (event.getMessage().getContentRaw() .startsWith(">distanceconversion")) {
@@ -89,9 +90,15 @@ public class DistanceConversion extends Command {
             return;
         }
 
-        if (!config.GetBoolean(configName)) {
-            //Disabled!
-            return;
+        if (config == null) {
+            System.out.println("Its null");
+        }
+
+        if (config.Contains(configName)) {
+            if (!config.GetBoolean(configName)) {
+                //Disabled!
+                return;
+            }
         }
 
         ConvertedNumber response = FindMeasurement(event.getMessage().getContentDisplay());
@@ -137,6 +144,10 @@ public class DistanceConversion extends Command {
 
         //Check for the numbers
         int amountOfNumbers = 0;
+
+        if (measurement.length() < 1) {
+            return null;
+        }
 
         //Get how many numbers infront of it are numeric
         while (isNumeric(measurement.charAt(measurement.length() - 1 - amountOfNumbers))) {
