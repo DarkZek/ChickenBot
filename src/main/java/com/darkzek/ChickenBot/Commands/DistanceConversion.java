@@ -74,7 +74,7 @@ public class DistanceConversion extends Command {
 
         String configName = "DistanceConversion.enabled";
 
-        if (event.getMessage().getContentRaw() .startsWith(">distanceconversion")) {
+        if (event.getMessage().getContentRaw().toLowerCase() .startsWith(">distanceconversion")) {
 
             //Find the value to change it to
             boolean newValue = false;
