@@ -31,6 +31,9 @@ public class CommandLoader {
         commands.add(new BigText());
         commands.add(new Emote());
         commands.add(new Chat());
+        commands.add(new DistanceConversion());
+        commands.add(new RemindMe());
+        commands.add(new BotTaunt());
 
         System.out.println("Successfully loaded all plugins");
     }

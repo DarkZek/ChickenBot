@@ -1,6 +1,7 @@
 package com.darkzek.ChickenBot;
 
 import com.darkzek.ChickenBot.Commands.CommandLoader;
+import com.darkzek.ChickenBot.Configuration.GuildConfigurationManager;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -20,8 +21,8 @@ import java.io.PrintStream;
  */
 public class ChickenBot extends ListenerAdapter{
 
-    //TODO: Add distance conversion command
-    //TODO: Add RemindMe functionality
+    //TODO: Move guild commands system to the new configuration api
+    //TODO: Add better messaging system - like a language file
 
     public static JDA jda;
 
@@ -36,10 +37,13 @@ public class ChickenBot extends ListenerAdapter{
             } catch (IOException e) {
 
             }
+
+            //Setup error listener
+            ExceptionTracker.registerExceptionHandler();
         }
 
-        //Setup error listener
-        ExceptionTracker.registerExceptionHandler();
+        //Load configs
+        GuildConfigurationManager.getInstance();
 
         //Setup account
         JDABuilder builder = new JDABuilder(AccountType.BOT);

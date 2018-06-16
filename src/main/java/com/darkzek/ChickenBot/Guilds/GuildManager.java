@@ -1,6 +1,5 @@
 package com.darkzek.ChickenBot.Guilds;
 
-import net.dv8tion.jda.core.JDA;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

@@ -110,10 +110,16 @@ public class Trigger {
             return;
         }
 
-        try {
+        //if not running from intellij
+        if (!ChickenBot.runningFromIntelliJ()) {
+            //Then have an exception handler
+            try {
+                command.MessageRecieved(event);
+            } catch (Exception e) {
+                OnError(e, event);
+            }
+        } else {
             command.MessageRecieved(event);
-        } catch (Exception e) {
-            OnError(e, event);
         }
     }
 
