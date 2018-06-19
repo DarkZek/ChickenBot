@@ -55,7 +55,14 @@ public class RemindMe extends Command {
             return;
         }
 
-        TimeUnit units = TimeUnit.valueOf((args[2] + "s").toUpperCase());
+        System.out.println(args[2]);
+
+        TimeUnit units = stringToTimeunit(args[2]);
+
+        if (units == null) {
+            Reply(Settings.getInstance().prefix + "Please use a correct time unit. I accept `days, hours and seconds`", event);
+            return;
+        }
 
         long time = System.currentTimeMillis();
 
@@ -150,6 +157,28 @@ public class RemindMe extends Command {
 
         //Delete the file
         file.delete();
+    }
+
+    public TimeUnit stringToTimeunit(String input) {
+        input = input.toLowerCase().trim();
+
+        switch (input) {
+            case "days":
+                return TimeUnit.DAYS;
+            case "day":
+                return TimeUnit.DAYS;
+            case "d":
+                return TimeUnit.DAYS;
+            case "hours":
+                return TimeUnit.HOURS;
+            case "hour":
+                return TimeUnit.HOURS;
+            case "seconds":
+                return TimeUnit.SECONDS;
+            case "second":
+                return TimeUnit.SECONDS;
+        }
+        return null;
     }
 }
 
