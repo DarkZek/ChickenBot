@@ -18,6 +18,8 @@ public class GuildCommandExecutor extends Command {
 
     public GuildCommandExecutor() {
         this.showInHelp = false;
+        this.name = "GuildCommandExecutor";
+        this.showInHelp = false;
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.MESSAGE_SENT));
         this.trigger.messageType = MessageType.GUILD;
 

@@ -34,6 +34,7 @@ public class CommandLoader {
         commands.add(new DistanceConversion());
         commands.add(new RemindMe());
         commands.add(new BotTaunt());
+        commands.add(new AutoTLDR());
 
         System.out.println("Successfully loaded all plugins");
     }
