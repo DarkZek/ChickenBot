@@ -18,7 +18,7 @@ public class BigText extends Command {
 
     public BigText() {
         this.description = "Converts text into a big image to prove your point";
-        this.name = "Big Text";
+        this.name = "BigText";
         this.usage = ">bigtext <input words>";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "bigtext");
         this.trigger.messageType = MessageType.BOTH;

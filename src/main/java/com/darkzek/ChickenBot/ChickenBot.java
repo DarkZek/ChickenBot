@@ -40,9 +40,6 @@ public class ChickenBot extends ListenerAdapter{
             } catch (IOException e) {
 
             }
-
-            //Setup error listener
-            ExceptionTracker.registerExceptionHandler();
         }
 
         //Load configs

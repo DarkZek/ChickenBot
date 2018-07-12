@@ -1,6 +1,8 @@
 package com.darkzek.ChickenBot;
 
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -29,22 +31,51 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onMessageDelete(MessageDeleteEvent event)
     {
-        for(Trigger trigger : deletedTriggers) {
-            trigger.MessageDeleted(event);
+        try {
+            for(Trigger trigger : deletedTriggers) {
+                trigger.MessageDeleted(event);
+            }
+        } catch (Exception e) {
+            ShowError("Message Delete Event", "Message Id - " + event.getMessageId() , e);
         }
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
-        for(Trigger trigger : messageTriggers) {
-            trigger.MessageRecieved(event);
+        try {
+            for(Trigger trigger : messageTriggers) {
+                trigger.MessageRecieved(event);
+            }
+        } catch (Exception e) {
+            ShowError("Message Recieved Event", event.getMessage().getContentDisplay(), e);
         }
+
     }
 
     public void onShutdown() {
-        for (Trigger trigger : shutdownTriggers) {
-            trigger.Shutdown();
+        try {
+            for(Trigger trigger : messageTriggers) {
+                trigger.Shutdown();
+            }
+        } catch (Exception e) {
+            ShowError("Shutdown Event", "None", e);
         }
+    }
+
+    public void ShowError(String name, String message, Exception e) {
+        StackTraceElement[] stackTrace = e.getStackTrace();
+
+        String trace = "";
+
+        for (StackTraceElement element : stackTrace) {
+            trace += element + "\n";
+        }
+
+        ChickenBot.TellMe("Hey man, we just blew a fuse!" +
+                "\nName: `" + name + "`" +
+                "\nMessage: `" + message + "`" +
+                "\nError: `" + e.getClass().getCanonicalName() + "`" +
+                "\nStacktrace:```" + trace + "```");
     }
 }
