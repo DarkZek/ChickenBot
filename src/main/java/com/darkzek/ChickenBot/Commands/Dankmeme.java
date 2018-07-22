@@ -2,6 +2,7 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.RedditPost;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
@@ -35,7 +36,7 @@ public class Dankmeme extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         RedditPost post;
 
         while (true) {
@@ -51,9 +52,11 @@ public class Dankmeme extends Command {
                 .setFooter(post.upvotes + " upvotes", null)
                 .setImage(post.imageLink)
                 .build()).queue();
+
+        event.processed = true;
     }
 
-    public RedditPost GetRandomPost(MessageReceivedEvent event) {
+    public RedditPost GetRandomPost(CommandRecievedEvent event) {
 
         String message = "";
         //Connect to reddit

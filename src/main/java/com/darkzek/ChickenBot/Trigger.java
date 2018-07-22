@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot;
 import com.darkzek.ChickenBot.Commands.Command;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
@@ -44,7 +45,7 @@ public class Trigger {
         }
     }
 
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         String message = event.getMessage().getContentRaw();
 
         if (event.getAuthor() == event.getJDA().getSelfUser()) {
@@ -101,30 +102,41 @@ public class Trigger {
 
         //Check if the command should even run for this type of message
         if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
-            return;
-        }
-
-        //Check if the command should even run for this type of message
-        if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
-            command.Reply(Settings.getInstance().prefix + "You cant use this command in this channel type!", event);
-            return;
-        }
-
-        //if not running from intellij
-        if (!ChickenBot.runningFromIntelliJ()) {
-            //Then have an exception handler
-            try {
-                command.MessageRecieved(event);
-            } catch (Exception e) {
-                OnError(e, event);
+            //Only show message if it was a command
+            if (type.contains(TriggerType.COMMAND)) {
+                command.Reply(Settings.getInstance().prefix + "You cant use this command in this channel type!", event);
             }
-        } else {
+            return;
+        }
+
+        try {
             command.MessageRecieved(event);
+            if (type.contains(TriggerType.COMMAND)) {
+                event.processed = true;
+            }
+        } catch (Exception e) {
+            OnError(e, event);
         }
     }
 
-    private void OnError(Exception e, MessageReceivedEvent message) {
-        command.Reply("We just blew a fuse!\nStacktrace: ```" + e.fillInStackTrace() + "\n" + StacktraceToString(e) + "```Please report this to DarkZek#8647", message);
+    private void OnError(Exception e, CommandRecievedEvent message) {
+        StackTraceElement[] stackTrace = e.getStackTrace();
+
+        String trace = "";
+
+        for (StackTraceElement element : stackTrace) {
+            trace += element + "\n";
+        }
+
+        String msg = "Hey man, we just blew a fuse! This error has been reported to DarkZek#8647\n" +
+                "\nName: `" + message.getCommandName() + "`" +
+                "\nMessage: `" + message.getMessage().getContentRaw() + "`" +
+                "\nError: `" + e.getClass().getCanonicalName() + "`" +
+                "\nStacktrace:```" + trace + "```";
+
+        ChickenBot.TellMe(msg);
+
+        command.Reply(msg, message);
     }
 
     private String StacktraceToString(Exception e) {

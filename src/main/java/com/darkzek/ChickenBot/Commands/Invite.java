@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot.Commands;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -26,7 +27,8 @@ public class Invite extends Command{
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         Reply(Settings.getInstance().prefix + inviteLink, event);
+        event.processed = true;
     }
 }

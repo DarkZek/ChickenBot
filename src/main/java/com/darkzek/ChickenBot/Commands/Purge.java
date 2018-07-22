@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot.Commands;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Reactions;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
@@ -33,10 +34,10 @@ public class Purge extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
-        String[] args = event.getMessage().getContentRaw().split(" ");
+    public void MessageRecieved(CommandRecievedEvent event) {
+        String[] args = event.getArgs();
 
-        if (args.length <= 1) {
+        if (args.length != 1) {
             SendMessage(Settings.getInstance().prefix + "You forgot the amount of messages!", event.getTextChannel());
             return;
         }
@@ -53,7 +54,7 @@ public class Purge extends Command {
 
         int num = 0;
         try {
-            num = Integer.parseInt(args[1]);
+            num = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             SendMessage(Settings.getInstance().prefix + " You forgot the amount of messages", event.getTextChannel());
             return;
@@ -74,7 +75,7 @@ public class Purge extends Command {
             event.getTextChannel().deleteMessages(test).queue();
             return;
         } catch (InsufficientPermissionException e) {
-            Reply(Settings.getInstance().prefix + "I don't have permissions! Please add permission `MESSAGE_MANAGE` to use this feature", event);
+            Reply(Settings.getInstance().prefix + "I don't have permission! Please add permission `MESSAGE_MANAGE` to use this feature", event);
             return;
         }
     }

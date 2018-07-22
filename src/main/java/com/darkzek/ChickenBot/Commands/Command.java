@@ -1,6 +1,7 @@
 package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.CommandType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -26,7 +27,7 @@ public class Command {
     public String[] alias;
     public boolean showInHelp = true;
 
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         Log("[ERROR] Unhandled message received event for command " + name);
     }
 
@@ -54,15 +55,22 @@ public class Command {
         }
     }
 
-    public void Reply(String message, MessageReceivedEvent event) {
+    public void Reply(String message, CommandRecievedEvent event) {
+        event.processed = true;
+        if (message.length() > 2000) {
+            message = message.substring(0, 1993) + "```...";
+        }
+
         Reply(message, event, false);
     }
 
-    public void ReplyImage(InputStream message, MessageReceivedEvent event) {
+    public void ReplyImage(InputStream message, CommandRecievedEvent event) {
+        event.processed = true;
         ReplyImage(message, event, false);
     }
 
-    public void ReplyImage(String imageUrl, MessageReceivedEvent event) {
+    public void ReplyImage(String imageUrl, CommandRecievedEvent event) {
+        event.processed = true;
         InputStream stream = null;
         try {
             URL url = new URL(imageUrl);
@@ -74,7 +82,8 @@ public class Command {
         }
     }
 
-    public void ReplyImage(InputStream message, MessageReceivedEvent event, boolean deleteMessage) {
+    public void ReplyImage(InputStream message, CommandRecievedEvent event, boolean deleteMessage) {
+        event.processed = true;
         if (event.getChannelType() == ChannelType.PRIVATE) {
             PrivateMessageImage(message, event.getAuthor());
         } else {
@@ -86,7 +95,8 @@ public class Command {
             }
         }
     }
-    public void Reply(String message, MessageReceivedEvent event, boolean deleteMessage) {
+    public void Reply(String message, CommandRecievedEvent event, boolean deleteMessage) {
+        event.processed = true;
         if (event.getChannelType() == ChannelType.PRIVATE) {
             PrivateMessage(message, event.getAuthor());
         } else {

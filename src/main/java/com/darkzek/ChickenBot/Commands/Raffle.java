@@ -1,6 +1,7 @@
 package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.entities.Member;
@@ -24,7 +25,7 @@ public class Raffle extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         //Get all members in channel
         List<Member> members = event.getTextChannel().getMembers();
 
@@ -32,5 +33,6 @@ public class Raffle extends Command {
         Member member = members.get(new Random().nextInt(members.size() - 1));
 
         Reply(Settings.getInstance().prefix + "Randomly selected " + member.getAsMention() + "!", event);
+        event.processed = true;
     }
 }

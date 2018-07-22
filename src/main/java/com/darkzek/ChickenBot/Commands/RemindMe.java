@@ -1,14 +1,14 @@
 package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.ChickenBot;
+import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.awt.*;
 import java.io.*;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class RemindMe extends Command {
 
@@ -28,6 +27,7 @@ public class RemindMe extends Command {
         this.usage = ">remindme";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND, TriggerType.BOT_SHUTDOWN), "remindme");
         this.trigger.SetIgnoreCase(true);
+        this.trigger.messageType = MessageType.BOTH;
 
         //Load reminders
         LoadRemindMe();
@@ -37,11 +37,11 @@ public class RemindMe extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
 
-        String[] args = event.getMessage().getContentStripped().split(" ");
+        String[] args = event.getArgs();
 
-        if (args.length < 3) {
+        if (args.length < 2) {
             Reply(Settings.getInstance().prefix + "Usage: `>remindme <Number> <Measurement Of Time>`\nExample: `>remindme 1 day`", event);
             return;
         }
@@ -49,42 +49,45 @@ public class RemindMe extends Command {
         int amountOfTime;
 
         try {
-            amountOfTime = Integer.parseInt(args[1]);
+            amountOfTime = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             Reply(Settings.getInstance().prefix + "Usage: `>remindme <Number> <Measurement Of Time>`\nExample: `>remindme 1 day`", event);
             return;
         }
 
-        System.out.println(args[2]);
+        int units = stringToTimeunit(args[1]) * amountOfTime;
 
-        TimeUnit units = stringToTimeunit(args[2]);
-
-        if (units == null) {
-            Reply(Settings.getInstance().prefix + "Please use a correct time unit. I accept `days, hours and seconds`", event);
+        if (units == -1) {
+            Reply(Settings.getInstance().prefix + "Please use a correct time unit. I accept `days, hours, minutes and seconds`", event);
             return;
         }
 
         long time = System.currentTimeMillis();
 
-        if (units.toMillis(amountOfTime) > 2678500000L) {
+        if (units > 2678500000L) {
             Reply(Settings.getInstance().prefix + "That duration is too long! The maximum is 31 days", event);
             return;
         }
 
-        long timeDue = time + units.toMillis(amountOfTime);
+        long timeDue = time + units;
 
         //Create a reminder
         Reminder reminder = new Reminder();
         reminder.timeDue = timeDue;
         reminder.channel = event.getChannel().getId();
-        reminder.guild = event.getGuild().getId();
+        if (event.getGuild() == null) {
+            reminder.guild = "@me";
+        } else {
+            reminder.guild = event.getGuild().getId();
+        }
         reminder.message = event.getMessage().getId();
         reminder.userid = event.getAuthor().getId();
 
         //Add it to the list
         reminders.add(reminder);
 
-        Reply(Settings.getInstance().prefix + "I will send you a reminder in " + amountOfTime + " " + units.toString().toLowerCase() + "!", event);
+        Reply(Settings.getInstance().prefix + "I will send you a reminder in " + amountOfTime + " " + args[1].toLowerCase() + "!", event);
+        event.processed = true;
     }
 
     public void ShowReminder(Reminder reminder) {
@@ -159,26 +162,37 @@ public class RemindMe extends Command {
         file.delete();
     }
 
-    public TimeUnit stringToTimeunit(String input) {
+    //Converts units of time into miliseconds
+    public int stringToTimeunit(String input) {
         input = input.toLowerCase().trim();
 
         switch (input) {
             case "days":
-                return TimeUnit.DAYS;
+                return 86400000;
             case "day":
-                return TimeUnit.DAYS;
+                return 86400000;
             case "d":
-                return TimeUnit.DAYS;
+                return 86400000;
             case "hours":
-                return TimeUnit.HOURS;
+                return 3600000;
             case "hour":
-                return TimeUnit.HOURS;
+                return 3600000;
+            case "h":
+                return 3600000;
+            case "minute":
+                return 60000;
+            case "minutes":
+                return 60000;
+            case "m":
+                return 60000;
             case "seconds":
-                return TimeUnit.SECONDS;
+                return 1000;
             case "second":
-                return TimeUnit.SECONDS;
+                return 1000;
+            case "s":
+                return 1000;
         }
-        return null;
+        return -1;
     }
 }
 

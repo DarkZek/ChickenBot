@@ -2,6 +2,7 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -22,7 +23,7 @@ public class BotTaunt extends Command {
     }
 
 
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
 
         //Once every 200 messages
         if (new Random().nextInt(200) != 51) {

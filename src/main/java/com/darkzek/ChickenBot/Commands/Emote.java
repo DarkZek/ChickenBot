@@ -2,6 +2,7 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -26,25 +27,25 @@ public class Emote extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
 
         String message = event.getMessage().getContentDisplay();
 
         //Get between all the spaces, to repmove the command bit
-        String[] args = message.split(" ");
+        String[] args = event.getArgs();
 
         //Check if they want to set a new emote
-        if (args.length > 2 && args[1].equalsIgnoreCase("set")){
+        if (args.length > 1 && args[0].equalsIgnoreCase("set")){
             SetEmote(args, event);
             return;
         }
 
-        if (args.length != 2) {
+        if (args.length != 1) {
             Reply(Settings.getInstance().prefix + "You forgot to add the message to emote!\nType `>help emote` for more information", event);
             return;
         }
 
-        String emoteName = args[1].toLowerCase();
+        String emoteName = args[0].toLowerCase();
 
         if (!emotes.containsKey(emoteName)){
             Reply(Settings.getInstance().prefix + "There is no emoji named `" + emoteName + "`!", event);
@@ -54,12 +55,14 @@ public class Emote extends Command {
         String link = emotes.get(emoteName);
 
         Reply(link, event);
+
+        event.processed = true;
     }
 
-    void SetEmote(String[] message, MessageReceivedEvent event) {
+    void SetEmote(String[] message, CommandRecievedEvent event) {
 
         if (message.length != 4) {
-            Reply(Settings.getInstance().prefix + "Usage: `>bigtext set <Emote_Name> <Link>`", event);
+            Reply(Settings.getInstance().prefix + "Usage: `>emote set <Emote_Name> <Link>`", event);
             return;
         }
 

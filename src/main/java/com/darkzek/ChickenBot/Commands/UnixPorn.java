@@ -2,6 +2,7 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -29,7 +30,7 @@ public class UnixPorn extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         String image = "";
         int times = 0;
         while (times < 4) {
@@ -50,9 +51,10 @@ public class UnixPorn extends Command {
         }
 
         ReplyImage(image, event);
+        event.processed = true;
     }
 
-    public String GetRandomPost(MessageReceivedEvent event) {
+    public String GetRandomPost(CommandRecievedEvent event) {
 
         String message = "";
         //Connect to reddit

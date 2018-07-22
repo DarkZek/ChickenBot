@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot.Commands.GuildsCommands;
 import com.darkzek.ChickenBot.Commands.Command;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Guilds.GuildCommand;
 import com.darkzek.ChickenBot.Guilds.GuildManager;
 import com.darkzek.ChickenBot.Settings;
@@ -27,12 +28,12 @@ public class GuildCommandExecutor extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
 
         String message = event.getMessage().getContentStripped();
         String m = message;
 
-        //Check if it uses  the command prefix or tags us
+        //Check if it uses  the command prefix or tags us (cant use the command type as we dont know what the command name will be)
         if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
             //Check if the message contains the correct phrase
             if (!message.startsWith(Settings.getInstance().enabler)) {
@@ -53,7 +54,6 @@ public class GuildCommandExecutor extends Command {
         if (!manager.GuildHasCustomCommands(guildId)) {
             return;
         }
-
 
         GuildCommand[] guildCommands = manager.GetGuildSettings(guildId).commands;
 

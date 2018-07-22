@@ -2,6 +2,7 @@ package com.darkzek.ChickenBot.Commands;
 
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -25,56 +26,70 @@ public class BigText extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
 
-        String message = event.getMessage().getContentStripped();
+        event.getMessage().delete().queue();
 
-        //Get between all the spaces, to repmove the command bit
-        String[] args = message.split(" ");
+        new Thread(new Runnable() {
 
-        if (args.length < 2) {
-            Reply(Settings.getInstance().prefix + "You forgot to add the message to make big!\nType `>help bigtext` for more information", event);
-            return;
-        }
+            @Override
+            public void run() {
 
-        message = "";
+                String message = event.getMessage().getContentStripped();
 
-        for (int i = 1; i < args.length; i++) {
-            message += args[i] + " ";
-        }
+                //Get between all the spaces, to repmove the command bit
+                String[] args = message.split(" ");
 
-        float fontSize = 800 - (message.length() * 10);
+                if (args.length < 2) {
+                    event.processed = true;
+                    Reply(Settings.getInstance().prefix + "You forgot to add the message to make big!\nType `>help bigtext` for more information", event);
+                    return;
+                }
 
-        if (fontSize < 200) {
-            fontSize = 200;
-        }
+                message = "";
 
-        final BufferedImage image = new BufferedImage(4560, 1500,
-                BufferedImage.TRANSLUCENT);
+                for (int i = 1; i < args.length; i++) {
+                    message += args[i] + " ";
+                }
 
-        Graphics g = image.getGraphics();
-        g.setColor(Color.WHITE);
-        g.setFont(g.getFont().deriveFont(fontSize));
-        g.drawString(message, 10, 800);
-        g.dispose();
+                float fontSize = 800 - (message.length() * 10);
 
+                if (fontSize < 200) {
+                    fontSize = 200;
+                }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] imageInByte;
-
-        try {
-            ImageIO.write( image, "png", baos );
-
-            baos.flush();
-            imageInByte = baos.toByteArray();
-            baos.close();
-
-        } catch (IOException e) {
-            Reply(Settings.getInstance().prefix + "I'd appreciate it if you'd kindly stop trying to f*** up my program, k thx.", event);
-            return;
-        }
+                final BufferedImage image = new BufferedImage(4560, 1500,
+                        BufferedImage.TRANSLUCENT);
 
 
-        ReplyImage(new ByteArrayInputStream(imageInByte), event, true);
+                Graphics g = image.getGraphics();
+                g.setColor(Color.WHITE);
+                g.setFont(g.getFont().deriveFont(fontSize));
+                g.drawString(message, 10, 800);
+                g.dispose();
+
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] imageInByte;
+
+                try {
+                    ImageIO.write( image, "png", baos );
+
+                    baos.flush();
+                    imageInByte = baos.toByteArray();
+                    baos.close();
+
+                } catch (IOException e) {
+                    event.processed = true;
+                    Reply(Settings.getInstance().prefix + "I'd appreciate it if you'd kindly stop trying to f*** up my program, k thx.", event);
+                    return;
+                }
+
+
+                ReplyImage(new ByteArrayInputStream(imageInByte), event);
+
+                event.processed = true;
+            }
+        }).start();
     }
 }

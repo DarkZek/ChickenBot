@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot.Commands;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -25,9 +26,9 @@ public class Search extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
         if (event.getMessage().getContentRaw().length() < 9) {
-            Reply(Settings.getInstance().prefix + "You need to supply a quote to google!", event);
+            Reply(Settings.getInstance().prefix + "You need to supply a quote to search!", event);
             return;
         }
 
@@ -36,5 +37,6 @@ public class Search extends Command {
         String message = "<https://duckduckgo.com/?q=!ducky+" + msg.replaceAll(" ", "+") + ">";
 
         Reply(message, event, true);
+        event.processed = true;
     }
 }

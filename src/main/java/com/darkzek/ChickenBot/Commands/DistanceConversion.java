@@ -4,6 +4,7 @@ import com.darkzek.ChickenBot.Configuration.GuildConfiguration;
 import com.darkzek.ChickenBot.Configuration.GuildConfigurationManager;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -26,9 +27,11 @@ public class DistanceConversion extends Command {
         manager = GuildConfigurationManager.getInstance();
     }
 
-    GuildConfigurationManager manager;
+    private GuildConfigurationManager manager;
 
-    //Listing all the variables - in how many Metres are are
+    private final String configName = "DistanceConversion.enabled";
+
+    //Listing all the variables - in how many Metres they are
     //Metric
     float[] conversions = new float[8];
 
@@ -68,30 +71,13 @@ public class DistanceConversion extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
+    public void MessageRecieved(CommandRecievedEvent event) {
 
         GuildConfiguration config = manager.GetGuildConfiguration(event.getGuild().getId() + "");
 
-        String configName = "DistanceConversion.enabled";
-
+        //Toggles distance conversion
         if (event.getMessage().getContentRaw().toLowerCase() .startsWith(">distanceconversion")) {
-
-            //Find the value to change it to
-            boolean newValue = false;
-            if (config.Contains(configName)) {
-                newValue = !config.GetBoolean(configName);
-            }
-
-            config.SetObject(configName, newValue);
-
-            config.Apply();
-
-            Reply(Settings.getInstance().prefix + "Successfully toggled Measurement Conversion to `" + newValue + "`", event);
-            return;
-        }
-
-        if (config == null) {
-            System.out.println("Its null");
+            ToggleDistanceConversion(config, event);
         }
 
         if (config.Contains(configName)) {
@@ -116,6 +102,22 @@ public class DistanceConversion extends Command {
                 .setFooter("Admins: Use the command >DistanceConversion to disable this feature", null)
                 .build()).queue();
 
+        event.processed = true;
+    }
+
+    private void ToggleDistanceConversion(GuildConfiguration config, CommandRecievedEvent event) {
+        //Find the value to change it to
+        boolean newValue = false;
+        if (config.Contains(configName)) {
+            newValue = !config.GetBoolean(configName);
+        }
+
+        config.SetObject(configName, newValue);
+
+        config.Apply();
+
+        Reply(Settings.getInstance().prefix + "Successfully toggled Measurement Conversion to `" + newValue + "`", event);
+        return;
     }
 
     private ConvertedNumber FindMeasurement(String message) {

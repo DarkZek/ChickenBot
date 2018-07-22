@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot.Commands;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -26,8 +27,7 @@ public class Help extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
-
+    public void MessageRecieved(CommandRecievedEvent event) {
 
         String[] args = event.getMessage().getContentRaw().split(" ");
 
@@ -64,5 +64,6 @@ public class Help extends Command {
         message += "\nCreated by DarkZek#8647. PM me for any feature requests or bug reports :)```";
 
         PrivateMessage(message, event.getAuthor());
+        event.processed = true;
     }
 }

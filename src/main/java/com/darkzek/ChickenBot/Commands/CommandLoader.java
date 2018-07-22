@@ -14,7 +14,6 @@ public class CommandLoader {
     public static List<Command> commands = new ArrayList<>();
 
     public static void Load() {
-        commands.add(new GNULinux());
         commands.add(new Help());
         commands.add(new Purge());
         commands.add(new Allegedly());
@@ -34,8 +33,8 @@ public class CommandLoader {
         commands.add(new DistanceConversion());
         commands.add(new RemindMe());
         commands.add(new BotTaunt());
-        commands.add(new AutoTLDR());
+        commands.add(new Summarize());
 
-        System.out.println("Successfully loaded all plugins");
+        System.out.println("Successfully loaded all Commands");
     }
 }

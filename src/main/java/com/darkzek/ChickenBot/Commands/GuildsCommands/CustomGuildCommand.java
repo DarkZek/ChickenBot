@@ -4,6 +4,7 @@ import com.darkzek.ChickenBot.Commands.Command;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Guilds.GuildCommand;
 import com.darkzek.ChickenBot.Guilds.GuildManager;
 import com.darkzek.ChickenBot.Guilds.GuildSettings;
@@ -27,9 +28,9 @@ public class CustomGuildCommand extends Command {
     }
 
     @Override
-    public void MessageRecieved(MessageReceivedEvent event) {
-        String[] args = event.getMessage().getContentStripped().split(" ");
-        if (args.length < 2) {
+    public void MessageRecieved(CommandRecievedEvent event) {
+        String[] args = event.getArgs();
+        if (args.length != 1) {
             Reply(Settings.getInstance().prefix + "Usage: >guildcommand <command>", event);
             return;
         }
@@ -63,7 +64,7 @@ public class CustomGuildCommand extends Command {
         }
     }
 
-    public void ListCommands(MessageReceivedEvent event, String[] args) {
+    public void ListCommands(CommandRecievedEvent event, String[] args) {
         GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getTextChannel().getId());
 
         GuildCommand[] commands = guild.commands;
@@ -78,7 +79,7 @@ public class CustomGuildCommand extends Command {
         Reply(msg , event);
     }
 
-    public void RemoveCommand(MessageReceivedEvent event, String[] args) {
+    public void RemoveCommand(CommandRecievedEvent event, String[] args) {
         if (args.length != 3) {
             Reply(Settings.getInstance().prefix + "Usage: >guildcommand remove <command_name>", event);
             return;
@@ -108,7 +109,7 @@ public class CustomGuildCommand extends Command {
         Reply(msg , event);
     }
 
-    public void AddCommand(MessageReceivedEvent event, String[] args) {
+    public void AddCommand(CommandRecievedEvent event, String[] args) {
         if (args.length < 3) {
             Reply(Settings.getInstance().prefix + "Usage: >guildcommand add <command_name> <message_to_send>\nNote: You can not have spaces in the command name", event);
             return;

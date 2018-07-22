@@ -23,9 +23,6 @@ public class ChickenBot extends ListenerAdapter{
 
     //TODO: Move guild commands system to the new configuration api
     //TODO: Add better messaging system - like a language file
-    //TODO: Add more units of time to RemindMe
-    //TODO: Add tldr function to summarise links posted https://github.com/ceteri/textrank
-    //TODO: Add better event system with automatic arg fetching
 
     public static JDA jda;
 
@@ -87,6 +84,10 @@ public class ChickenBot extends ListenerAdapter{
         User darkzek = jda.getUserById("130173614702985216");
 
         PrivateChannel pc = darkzek.openPrivateChannel().complete();
+
+        if (message.length() > 2000) {
+            message = message.substring(0, 1993) + "```...";
+        }
 
         pc.sendMessage(message).queue();
     }

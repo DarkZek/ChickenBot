@@ -1,5 +1,6 @@
 package com.darkzek.ChickenBot;
 
+import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by darkzek on 28/02/18.
@@ -43,19 +45,34 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
-        try {
-            for(Trigger trigger : messageTriggers) {
-                trigger.MessageRecieved(event);
-            }
-        } catch (Exception e) {
-            ShowError("Message Recieved Event", event.getMessage().getContentDisplay(), e);
+        if (event.getAuthor() == event.getJDA().getSelfUser()) {
+            return;
         }
 
+        CommandRecievedEvent commandRecievedEvent = new CommandRecievedEvent(event);
+        try {
+            for(Trigger trigger : messageTriggers) {
+                trigger.MessageRecieved(commandRecievedEvent);
+            }
+
+            //Exempt angry faces
+            if (event.getMessage().getContentRaw().startsWith(">") && !event.getMessage().getContentRaw().startsWith(">:") && commandRecievedEvent.processed == false && !event.getAuthor().isBot()) {
+                unknownCommand(event);
+            }
+
+        } catch (Exception e) {
+            ShowError("Message Received Event", event.getMessage().getContentDisplay(), e);
+        }
+    }
+
+    public void unknownCommand(MessageReceivedEvent event) {
+        event.getChannel().sendMessage(Settings.getInstance().prefix + "Unknown command!").queue();
     }
 
     public void onShutdown() {
+
         try {
-            for(Trigger trigger : messageTriggers) {
+            for(Trigger trigger : shutdownTriggers) {
                 trigger.Shutdown();
             }
         } catch (Exception e) {
