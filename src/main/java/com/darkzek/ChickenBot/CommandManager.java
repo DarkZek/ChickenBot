@@ -89,10 +89,16 @@ public class CommandManager extends ListenerAdapter {
             trace += element + "\n";
         }
 
-        ChickenBot.TellMe("Hey man, we just blew a fuse!" +
+        String msg = "Hey man, we just blew a fuse!" +
                 "\nName: `" + name + "`" +
                 "\nMessage: `" + message + "`" +
                 "\nError: `" + e.getClass().getCanonicalName() + "`" +
-                "\nStacktrace:```" + trace + "```");
+                "\nStacktrace:```" + trace + "```";
+
+        if (msg.length() > 2000) {
+            msg = msg.substring(0, 1996) + "```...";
+        }
+
+        ChickenBot.TellMe(msg);
     }
 }

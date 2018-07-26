@@ -134,6 +134,10 @@ public class Trigger {
                 "\nError: `" + e.getClass().getCanonicalName() + "`" +
                 "\nStacktrace:```" + trace + "```";
 
+        if (msg.length() > 2000) {
+            msg = msg.substring(0, 1996) + "```...";
+        }
+
         ChickenBot.TellMe(msg);
 
         command.Reply(msg, message);
