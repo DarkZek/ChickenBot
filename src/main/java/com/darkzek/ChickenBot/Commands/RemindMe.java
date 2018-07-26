@@ -7,6 +7,7 @@ import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -20,6 +21,7 @@ import java.util.TimerTask;
 public class RemindMe extends Command {
 
     ArrayList<Reminder> reminders = new ArrayList();
+    public Timer timer;
 
     public RemindMe() {
         this.description = "Reminds you about a post";
@@ -32,8 +34,16 @@ public class RemindMe extends Command {
         //Load reminders
         LoadRemindMe();
 
-        //Setup repeating task to check if we have any tasks due
-        new RemindMeTimer().Setup(this);
+        this.timer = new Timer();
+        TimerTask task = new TimerTask()
+        {
+            public void run()
+            {
+                CheckForCompletedReminders(ChickenBot.jda);
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 1000, 1000);
     }
 
     @Override
@@ -90,10 +100,10 @@ public class RemindMe extends Command {
         event.processed = true;
     }
 
-    public void ShowReminder(Reminder reminder) {
+    public void ShowReminder(Reminder reminder, JDA jda) {
         String link = "https://discordapp.com/channels/"+ reminder.guild + "/" + reminder.channel + "/" + reminder.message;
 
-        User usr = ChickenBot.jda.getUserById(reminder.userid);
+        User usr = jda.getUserById(reminder.userid);
 
         PrivateChannel pm = usr.openPrivateChannel().complete();
 
@@ -104,7 +114,7 @@ public class RemindMe extends Command {
                 .build()).queue();
     }
 
-    public void CheckForCompletedReminders() {
+    public void CheckForCompletedReminders(JDA jda) {
         long time = System.currentTimeMillis();
 
 
@@ -112,7 +122,7 @@ public class RemindMe extends Command {
             Reminder reminder = reminders.get(i);
             if (reminder.timeDue < time) {
                 //Its due!
-                ShowReminder(reminder);
+                ShowReminder(reminder, jda);
                 reminders.remove(i);
             }
         }
@@ -202,22 +212,4 @@ class Reminder implements Serializable {
     String channel;
     String message;
     long timeDue;
-}
-
-class RemindMeTimer extends TimerTask{
-
-    private RemindMe remindMe;
-
-    public void Setup(RemindMe remindMe) {
-        this.remindMe = remindMe;
-
-        Timer myTimer = new Timer();
-
-        //Repeat every 10 minutes
-        myTimer.schedule(this, 10000, 1000);
-    }
-
-    public void run() {
-        remindMe.CheckForCompletedReminders();
-    }
 }
