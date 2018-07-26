@@ -12,7 +12,6 @@ import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import karimo94.Summarizer;
 import net.dv8tion.jda.core.entities.ChannelType;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
