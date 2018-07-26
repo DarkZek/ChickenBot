@@ -91,17 +91,42 @@ public class RemindMe extends Command {
     }
 
     public void ShowReminder(Reminder reminder) {
-        String link = "https://discordapp.com/channels/"+ reminder.guild + "/" + reminder.channel + "/" + reminder.message;
+        try {
+            String link = "https://discordapp.com/channels/"+ reminder.guild + "/" + reminder.channel + "/" + reminder.message;
 
-        User usr = ChickenBot.jda.getUserById(reminder.userid);
+            User usr = ChickenBot.jda.getUserById(reminder.userid);
 
-        PrivateChannel pm = usr.openPrivateChannel().complete();
+            PrivateChannel pm = usr.openPrivateChannel().complete();
 
-        pm.sendMessage(new EmbedBuilder()
-                .setTitle("Reminder for " + usr.getName())
-                .setDescription("Reminding you of your [post](" + link + ")")
-                .setColor(new Color(15064245))
-                .build()).queue();
+            pm.sendMessage(new EmbedBuilder()
+                    .setTitle("Reminder for " + usr.getName())
+                    .setDescription("Reminding you of your [post](" + link + ")")
+                    .setColor(new Color(15064245))
+                    .build()).queue();
+        } catch (Exception e) {
+            //Try report the issue
+
+            StackTraceElement[] stackTrace = e.getStackTrace();
+
+            String trace = "";
+
+            for (StackTraceElement element : stackTrace) {
+                trace += element + "\n";
+            }
+
+            String msg = "Hey man, we just blew a fuse!" +
+                    "\nName: `RemindMe ShowReminder()`" +
+                    "\nError: `" + e.getClass().getCanonicalName() + "`" +
+                    "\nStacktrace:```" + trace + "```";
+
+            System.out.println(msg);
+
+            if (msg.length() > 2000) {
+                msg = msg.substring(0, 1996) + "```...";
+            }
+
+            ChickenBot.TellMe(msg);
+        }
     }
 
     public void CheckForCompletedReminders() {

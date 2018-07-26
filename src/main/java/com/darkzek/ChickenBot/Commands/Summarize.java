@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class Summarize extends Command{
     private Summarizer summarizer = new Summarizer();
-    private int minSentenceLength = 45;
+    private int minSentenceLength = 30;
     private final String configName = "Summarize.enabled";
 
     public Summarize() {
@@ -52,82 +52,79 @@ public class Summarize extends Command{
 
         //Run async
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 
-                if (event.getChannelType() == ChannelType.TEXT) {
-                    GuildConfiguration config = manager.GetGuildConfiguration(event.getGuild().getId() + "");
+            if (event.getChannelType() == ChannelType.TEXT) {
+                GuildConfiguration config = manager.GetGuildConfiguration(event.getGuild().getId() + "");
 
-                    if (event.getCommandName().equalsIgnoreCase("summarize")) {
-                        ToggleSummarize(config, event);
-                        return;
-                    }
-
-                    if (config.Contains(configName) && config.GetBoolean(configName) == false) {
-                        //Disabled command!
-                        return;
-                    }
-                } else {
-                    if (event.getCommandName().equalsIgnoreCase("summarize")) {
-                        event.processed = true;
-                        Reply(Settings.getInstance().prefix + "That command is disabled in Direct Messages", event);
-                        return;
-                    }
-                }
-
-                Matcher matcher = urlPattern.matcher(event.getMessage().getContentRaw());
-                if (matcher.find() == false) {
+                if (event.getCommandName().equalsIgnoreCase("summarize")) {
+                    ToggleSummarize(config, event);
                     return;
                 }
 
-                //Link found!
-                String link = event.getMessage().getContentRaw().substring(matcher.start(), matcher.end());
-
-                // NOTE: Use ArticleExtractor unless DefaultExtractor gives better results for you String
-                String websiteData = "";
-
-                try {
-                    URLConnection url = new URL(link).openConnection();
-
-                    Scanner scanner = new Scanner(url.getInputStream());
-                    scanner.useDelimiter("\\Z");
-                    websiteData = scanner.next();
-
-                    if (!websiteData.contains("content=\"article\"")) {
-                        return;
-                    }
-
-                    websiteData = ArticleExtractor.INSTANCE.getText(websiteData);
-                } catch (BoilerpipeProcessingException e) {
-                    Reply("ERROR", event);
-                    return;
-                } catch (MalformedURLException e) {
-                    return;
-                } catch (IOException e) {
+                if (config.Contains(configName) && config.GetBoolean(configName) == false) {
+                    //Disabled command!
                     return;
                 }
-
-                String[] lines = websiteData.split("\n");
-
-                String cleanText = "";
-
-                for (String line : lines ) {
-
-                    if (line.startsWith("FILE PHOTO")) {
-                        continue;
-                    }
-                    if (line.length() < minSentenceLength) {
-                        continue;
-                    }
-                    cleanText += line + "\n" + " ";
+            } else {
+                if (event.getCommandName().equalsIgnoreCase("summarize")) {
+                    event.processed = true;
+                    Reply(Settings.getInstance().prefix + "That command is disabled in Direct Messages", event);
+                    return;
                 }
-
-                String summary = summarizer.Summarize (cleanText, 3);
-
-                Reply("TLDR: ```" + summary + "```Type >summarize to disable these messages", event);
-                event.processed = true;
             }
+
+            Matcher matcher = urlPattern.matcher(event.getMessage().getContentRaw());
+            if (matcher.find() == false) {
+                return;
+            }
+
+            //Link found!
+            String link = event.getMessage().getContentRaw().substring(matcher.start(), matcher.end());
+
+            String websiteData = "";
+
+            try {
+                URLConnection url = new URL(link).openConnection();
+
+                Scanner scanner = new Scanner(url.getInputStream());
+                scanner.useDelimiter("\\Z");
+                websiteData = scanner.next();
+
+                //Check if its even an article
+                if (!websiteData.contains("content=\"article\"")) {
+                    return;
+                }
+
+                websiteData = ArticleExtractor.INSTANCE.getText(websiteData);
+            } catch (BoilerpipeProcessingException e) {
+                Reply("ERROR", event);
+                return;
+            } catch (MalformedURLException e) {
+                return;
+            } catch (IOException e) {
+                return;
+            }
+
+            String[] lines = websiteData.split("\n");
+
+            String cleanText = "";
+
+            for (String line : lines ) {
+
+                if (line.startsWith("FILE PHOTO")) {
+                    continue;
+                }
+                if (line.length() < minSentenceLength) {
+                    continue;
+                }
+                cleanText += line + "\n" + " ";
+            }
+
+            String summary = summarizer.Summarize (cleanText, 3);
+
+            Reply("TLDR: ```" + summary + "```Type >summarize to disable these messages", event);
+            event.processed = true;
         }).start();
     }
 

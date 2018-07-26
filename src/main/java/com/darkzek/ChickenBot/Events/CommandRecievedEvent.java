@@ -17,12 +17,15 @@ public class CommandRecievedEvent extends MessageReceivedEvent {
 
         args = LoadArgs(event.getMessage().getContentRaw());
 
-        commandName = event.getMessage().getContentRaw().split(" ")[0].substring(1);
+        commandName = event.getMessage().getContentRaw().split(" ")[0];
+
+        if (commandName.length() > 0) {
+            commandName = commandName.substring(1);
+        }
     }
 
     private String[] LoadArgs(String args) {
         String[] arguments = args.split(" ");
-
 
         return Arrays.copyOfRange(arguments, 1, arguments.length);
     }
