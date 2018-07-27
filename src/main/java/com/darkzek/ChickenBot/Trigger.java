@@ -119,7 +119,7 @@ public class Trigger {
                     AddField("Message", event.getMessage().getContentDisplay()).
                     AddField("User", event.getAuthor().getAsMention()).
                     AddField("Command", command.name).
-                    AddStacktrace(e).Report();
+                    AddStacktrace(e).Report(event.getTextChannel());
         }
     }
 

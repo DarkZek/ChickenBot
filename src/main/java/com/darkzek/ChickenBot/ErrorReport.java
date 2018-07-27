@@ -1,5 +1,8 @@
 package com.darkzek.ChickenBot;
 
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.exceptions.PermissionException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,7 +33,7 @@ public class ErrorReport {
         return this;
     }
 
-    public void Report() {
+    private String FileReport() {
         String msg = "Hey man, we just blew a fuse!\n";
 
         for (Map.Entry<String, String> entry : objects) {
@@ -59,5 +62,20 @@ public class ErrorReport {
 
         //Send message on discord
         ChickenBot.TellMe(msg);
+
+        return msg;
+    }
+
+    public void Report() {
+        FileReport();
+    }
+
+    public void Report(TextChannel channel) {
+        String msg = FileReport();
+        try {
+            channel.sendMessage(msg).queue();
+        } catch (PermissionException e) {
+
+        }
     }
 }
