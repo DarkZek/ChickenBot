@@ -100,7 +100,7 @@ public class RemindMe extends Command {
 
             pm.sendMessage(new EmbedBuilder()
                     .setTitle("Reminder for " + usr.getName())
-                    .setDescription("Reminding you of your [post](" + link + ")")
+                    .setDescription("Reminding you of your \n" + link + "")
                     .setColor(new Color(15064245))
                     .build()).queue();
         } catch (Exception e) {

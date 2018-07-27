@@ -115,44 +115,12 @@ public class Trigger {
                 event.processed = true;
             }
         } catch (Exception e) {
-            OnError(e, event);
+            new ErrorReport().AddField("Name", event.getCommandName()).
+                    AddField("Message", event.getMessage().getContentDisplay()).
+                    AddField("User", event.getAuthor().getAsMention()).
+                    AddField("Command", command.name).
+                    AddStacktrace(e).Report();
         }
-    }
-
-    private void OnError(Exception e, CommandRecievedEvent message) {
-        StackTraceElement[] stackTrace = e.getStackTrace();
-
-        String trace = "";
-
-        for (StackTraceElement element : stackTrace) {
-            trace += element + "\n";
-        }
-
-        String msg = "Hey man, we just blew a fuse! This error has been reported to DarkZek#8647\n" +
-                "\nName: `" + message.getCommandName() + "`" +
-                "\nMessage: `" + message.getMessage().getContentRaw() + "`" +
-                "\nError: `" + e.getClass().getCanonicalName() + "`" +
-                "\nStacktrace:```" + trace + "```";
-
-        if (msg.length() > 2000) {
-            msg = msg.substring(0, 1996) + "```...";
-        }
-
-        ChickenBot.TellMe(msg);
-
-        command.Reply(msg, message);
-    }
-
-    private String StacktraceToString(Exception e) {
-        StackTraceElement[] stack = e.getStackTrace();
-
-        String m = "";
-
-        for (StackTraceElement stackTraceElement:stack) {
-            m += stackTraceElement.toString() + "\n";
-        }
-
-        return m;
     }
 
     public void Shutdown() {

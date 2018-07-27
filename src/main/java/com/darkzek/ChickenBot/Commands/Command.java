@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +45,11 @@ public class Command {
     }
 
     public void SendMessage(String msg, MessageChannel channel) {
-        channel.sendMessage(msg).queue();
+        try {
+            channel.sendMessage(msg).queue();
+        } catch (InsufficientPermissionException e) {
+            return;
+        }
     }
 
     public void SendMessageImage(InputStream msg, MessageChannel channel) {

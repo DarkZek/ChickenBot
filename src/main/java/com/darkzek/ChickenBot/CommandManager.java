@@ -38,7 +38,9 @@ public class CommandManager extends ListenerAdapter {
                 trigger.MessageDeleted(event);
             }
         } catch (Exception e) {
-            ShowError("Message Delete Event", "Message Id - " + event.getMessageId() , e);
+            new ErrorReport().AddField("Name", "Message Deleted Event").
+                    AddField("Message ID", event.getMessageId()).
+                    AddStacktrace(e).Report();
         }
     }
 
@@ -61,7 +63,9 @@ public class CommandManager extends ListenerAdapter {
             }
 
         } catch (Exception e) {
-            ShowError("Message Received Event", event.getMessage().getContentDisplay(), e);
+            new ErrorReport().AddField("Name", "Message Recieved Event").
+                    AddField("Message", event.getMessage().getContentDisplay()).
+                    AddStacktrace(e).Report();
         }
     }
 
@@ -76,29 +80,7 @@ public class CommandManager extends ListenerAdapter {
                 trigger.Shutdown();
             }
         } catch (Exception e) {
-            ShowError("Shutdown Event", "None", e);
+            new ErrorReport().AddField("Name", "Shutdown Event").AddStacktrace(e).Report();
         }
-    }
-
-    public void ShowError(String name, String message, Exception e) {
-        StackTraceElement[] stackTrace = e.getStackTrace();
-
-        String trace = "";
-
-        for (StackTraceElement element : stackTrace) {
-            trace += element + "\n";
-        }
-
-        String msg = "Hey man, we just blew a fuse!" +
-                "\nName: `" + name + "`" +
-                "\nMessage: `" + message + "`" +
-                "\nError: `" + e.getClass().getCanonicalName() + "`" +
-                "\nStacktrace:```" + trace + "```";
-
-        if (msg.length() > 2000) {
-            msg = msg.substring(0, 1996) + "```...";
-        }
-
-        ChickenBot.TellMe(msg);
     }
 }

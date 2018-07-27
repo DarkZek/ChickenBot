@@ -155,6 +155,9 @@ public class GuildManager {
     }
 
     public boolean GuildHasCustomCommands(String guildId) {
+        if (guilds == null) {
+            return false;
+        }
         for (GuildSettings guild : guilds) {
             if (guild.GetGuildId().equals(guildId)) {
                 return true;
