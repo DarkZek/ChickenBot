@@ -29,10 +29,6 @@ public class Emote extends Command {
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
 
-        throw new NullPointerException("test");
-    }
-    public void j(CommandRecievedEvent event) {
-
         String message = event.getMessage().getContentDisplay();
 
         //Get between all the spaces, to repmove the command bit
