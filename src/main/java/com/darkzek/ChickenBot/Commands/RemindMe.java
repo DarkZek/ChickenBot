@@ -42,7 +42,7 @@ public class RemindMe extends Command {
         String[] args = event.getArgs();
 
         if (args.length < 2) {
-            Reply(Settings.getInstance().prefix + "Usage: `>remindme <Number> <Measurement Of Time>`\nExample: `>remindme 1 day`", event);
+            Reply(Settings.messagePrefix + "Usage: `>remindme <Number> <Measurement Of Time>`\nExample: `>remindme 1 day`", event);
             return;
         }
 
@@ -51,21 +51,21 @@ public class RemindMe extends Command {
         try {
             amountOfTime = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            Reply(Settings.getInstance().prefix + "Usage: `>remindme <Number> <Measurement Of Time>`\nExample: `>remindme 1 day`", event);
+            Reply(Settings.messagePrefix + "Usage: `>remindme <Number> <Measurement Of Time>`\nExample: `>remindme 1 day`", event);
             return;
         }
 
         int units = stringToTimeunit(args[1]) * amountOfTime;
 
         if (units == -1) {
-            Reply(Settings.getInstance().prefix + "Please use a correct time unit. I accept `days, hours, minutes and seconds`", event);
+            Reply(Settings.messagePrefix + "Please use a correct time unit. I accept `days, hours, minutes and seconds`", event);
             return;
         }
 
         long time = System.currentTimeMillis();
 
         if (units > 2678500000L) {
-            Reply(Settings.getInstance().prefix + "That duration is too long! The maximum is 31 days", event);
+            Reply(Settings.messagePrefix + "That duration is too long! The maximum is 31 days", event);
             return;
         }
 
@@ -86,7 +86,7 @@ public class RemindMe extends Command {
         //Add it to the list
         reminders.add(reminder);
 
-        Reply(Settings.getInstance().prefix + "I will send you a reminder in " + amountOfTime + " " + args[1].toLowerCase() + "!", event);
+        Reply(Settings.messagePrefix + "I will send you a reminder in " + amountOfTime + " " + args[1].toLowerCase() + "!", event);
         event.processed = true;
     }
 

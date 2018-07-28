@@ -28,7 +28,7 @@ public class Search extends Command {
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
         if (event.getMessage().getContentRaw().length() < 9) {
-            Reply(Settings.getInstance().prefix + "You need to supply a quote to search!", event);
+            Reply(Settings.messagePrefix + "You need to supply a quote to search!", event);
             return;
         }
 

@@ -10,8 +10,8 @@ import java.util.Scanner;
  */
 public class Settings {
 
-    public String enabler = ">";
-    public String prefix = "Brawk!\n";
+    public static String enabler = ">";
+    public static String messagePrefix = "Brawk!\n";
 
     private static Settings settings = new Settings( );
 

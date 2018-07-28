@@ -8,6 +8,7 @@ import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 
@@ -21,7 +22,7 @@ public class DistanceConversion extends Command {
         this.showInHelp = false;
         this.usage = "Say a unit of measurement and it will convert it";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.MESSAGE_SENT, TriggerType.BOT_SHUTDOWN));
-        this.trigger.messageType = MessageType.GUILD;
+        this.trigger.messageType = MessageType.BOTH;
 
         LoadMeasurements();
         manager = GuildConfigurationManager.getInstance();
@@ -73,17 +74,19 @@ public class DistanceConversion extends Command {
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
 
-        GuildConfiguration config = manager.GetGuildConfiguration(event.getGuild().getId() + "");
+        if (event.getChannelType() != ChannelType.PRIVATE) {
+            GuildConfiguration config = manager.GetGuildConfiguration(event.getGuild().getId() + "");
 
-        //Toggles distance conversion
-        if (event.getMessage().getContentRaw().toLowerCase() .startsWith(">distanceconversion")) {
-            ToggleDistanceConversion(config, event);
-        }
+            //Toggles distance conversion
+            if (event.getMessage().getContentRaw().toLowerCase() .startsWith(">distanceconversion")) {
+                ToggleDistanceConversion(config, event);
+            }
 
-        if (config.Contains(configName)) {
-            if (!config.GetBoolean(configName)) {
-                //Disabled!
-                return;
+            if (config.Contains(configName)) {
+                if (!config.GetBoolean(configName)) {
+                    //Disabled!
+                    return;
+                }
             }
         }
 
@@ -116,7 +119,7 @@ public class DistanceConversion extends Command {
 
         config.Apply();
 
-        Reply(Settings.getInstance().prefix + "Successfully toggled Measurement Conversion to `" + newValue + "`", event);
+        Reply(Settings.messagePrefix + "Successfully toggled Measurement Conversion to `" + newValue + "`", event);
         return;
     }
 

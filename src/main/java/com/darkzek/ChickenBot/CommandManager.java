@@ -1,11 +1,14 @@
 package com.darkzek.ChickenBot;
 
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ public class CommandManager extends ListenerAdapter {
         } catch (Exception e) {
             new ErrorReport().AddField("Name", "Message Deleted Event").
                     AddField("Message ID", event.getMessageId()).
-                    AddStacktrace(e).Report();
+                    AddStacktrace(e).Report(event.getTextChannel());
         }
     }
 
@@ -63,14 +66,20 @@ public class CommandManager extends ListenerAdapter {
             }
 
         } catch (Exception e) {
-            new ErrorReport().AddField("Name", "Message Recieved Event").
+            new ErrorReport().AddField("Name", commandRecievedEvent.getCommandName()).
                     AddField("Message", event.getMessage().getContentDisplay()).
-                    AddStacktrace(e).Report();
+                    AddField("User", event.getAuthor().getAsMention()).
+                    AddStacktrace(e).
+                    Report(event.getTextChannel());
         }
     }
 
     public void unknownCommand(MessageReceivedEvent event) {
-        event.getChannel().sendMessage(Settings.getInstance().prefix + "Unknown command!").queue();
+        try {
+            event.getChannel().sendMessage(Settings.messagePrefix + "Unknown command!").queue();
+        } catch (InsufficientPermissionException e) {
+
+        }
     }
 
     public void onShutdown() {

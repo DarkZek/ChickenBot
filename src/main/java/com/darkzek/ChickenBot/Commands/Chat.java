@@ -64,7 +64,7 @@ public class Chat extends Command {
             response = "Error coming up with witty response!```" + e.fillInStackTrace() + "```";
         }
 
-        Reply(Settings.getInstance().prefix + response, event);
+        Reply(Settings.messagePrefix + response, event);
     }
 
 }

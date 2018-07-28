@@ -70,41 +70,16 @@ public class Trigger {
             msgType = MessageType.PRIVATE;
         }
 
-        if (ignoreCase) {
-            message = message.toLowerCase();
+        if (!CommandCheck(event)) {
+            return;
         }
 
-
-        if (type.contains(TriggerType.COMMAND)) {
-            //Get message content
-            String m = event.getMessage().getContentStripped();
-            //Check if it uses  the command prefix or tags us
-            if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
-                //Check if the message contains the correct phrase
-                if (!message.startsWith(Settings.getInstance().enabler)) {
-                    return;
-                }
-                m = m.substring(1);
-            } else {
-                int index = m.indexOf(' ') + 1;
-                if (index == -1) {
-                    return;
-                }
-                m = m.substring(index);
-            }
-            if (ignoreCase) {
-                m = m.toLowerCase();
-            }
-            if (!m.startsWith(arg)) {
-                return;
-            }
-        }
 
         //Check if the command should even run for this type of message
         if (this.messageType != MessageType.BOTH && this.messageType != msgType) {
             //Only show message if it was a command
             if (type.contains(TriggerType.COMMAND)) {
-                command.Reply(Settings.getInstance().prefix + "You cant use this command in this channel type!", event);
+                command.Reply(Settings.messagePrefix + "You cant use this command in this channel type!", event);
             }
             return;
         }
@@ -119,8 +94,43 @@ public class Trigger {
                     AddField("Message", event.getMessage().getContentDisplay()).
                     AddField("User", event.getAuthor().getAsMention()).
                     AddField("Command", command.name).
-                    AddStacktrace(e).Report(event.getTextChannel());
+                    AddStacktrace(e).
+                    Report(event.getTextChannel());
         }
+    }
+
+    private boolean CommandCheck(CommandRecievedEvent event) {
+        String message = event.getMessage().getContentDisplay();
+        if (ignoreCase) {
+            message = message.toLowerCase();
+        }
+
+        if (type.contains(TriggerType.COMMAND)) {
+            //Get message content
+            String m = event.getMessage().getContentStripped();
+
+            //Check if it uses  the command prefix or tags us
+            if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
+                //Check if the message contains the correct phrase
+                if (!message.startsWith(Settings.getInstance().enabler)) {
+                    return false;
+                }
+                m = m.substring(1);
+            } else {
+                int index = m.indexOf(' ') + 1;
+                if (index == -1) {
+                    return false;
+                }
+                m = m.substring(index);
+            }
+            if (ignoreCase) {
+                m = m.toLowerCase();
+            }
+            if (!m.startsWith(arg)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void Shutdown() {

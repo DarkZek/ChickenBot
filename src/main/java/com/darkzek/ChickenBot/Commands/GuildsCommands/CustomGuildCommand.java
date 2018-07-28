@@ -31,7 +31,7 @@ public class CustomGuildCommand extends Command {
     public void MessageRecieved(CommandRecievedEvent event) {
         String[] args = event.getArgs();
         if (args.length != 1) {
-            Reply(Settings.getInstance().prefix + "Usage: >guildcommand <command>", event);
+            Reply(Settings.messagePrefix + "Usage: >guildcommand <command>", event);
             return;
         }
 
@@ -39,7 +39,7 @@ public class CustomGuildCommand extends Command {
 
         switch (commandName) {
             case "help": {
-                Reply(Settings.getInstance().prefix + "Guild command is used for servers to have their own custom commands.\n```" +
+                Reply(Settings.messagePrefix + "Guild command is used for servers to have their own custom commands.\n```" +
                         ">guildcommand add <command_name> <message_to_send>\n" +
                         ">guildcommand remove <command_name>\n" +
                         ">guildcommand list```", event);
@@ -58,7 +58,7 @@ public class CustomGuildCommand extends Command {
                 break;
             }
             default: {
-                Reply(Settings.getInstance().prefix + "Usage: >guildcommand <command>", event);
+                Reply(Settings.messagePrefix + "Usage: >guildcommand <command>", event);
                 break;
             }
         }
@@ -81,11 +81,11 @@ public class CustomGuildCommand extends Command {
 
     public void RemoveCommand(CommandRecievedEvent event, String[] args) {
         if (args.length != 3) {
-            Reply(Settings.getInstance().prefix + "Usage: >guildcommand remove <command_name>", event);
+            Reply(Settings.messagePrefix + "Usage: >guildcommand remove <command_name>", event);
             return;
         }
         if (!event.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
-            Reply(Settings.getInstance().prefix + "You need permission MANAGE_CHANNEL to do that!", event);
+            Reply(Settings.messagePrefix + "You need permission MANAGE_CHANNEL to do that!", event);
             return;
         }
 
@@ -111,11 +111,11 @@ public class CustomGuildCommand extends Command {
 
     public void AddCommand(CommandRecievedEvent event, String[] args) {
         if (args.length < 3) {
-            Reply(Settings.getInstance().prefix + "Usage: >guildcommand add <command_name> <message_to_send>\nNote: You can not have spaces in the command name", event);
+            Reply(Settings.messagePrefix + "Usage: >guildcommand add <command_name> <message_to_send>\nNote: You can not have spaces in the command name", event);
             return;
         }
         if (!event.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
-            Reply(Settings.getInstance().prefix + "You need permission MANAGE_CHANNEL to do that!", event);
+            Reply(Settings.messagePrefix + "You need permission MANAGE_CHANNEL to do that!", event);
             return;
         }
 
@@ -131,7 +131,7 @@ public class CustomGuildCommand extends Command {
 
         if (guild.HasCommand(commandName)) {
             //Server already has command
-            Reply(Settings.getInstance().prefix + "You already have a command named `" + commandName + "`!", event);
+            Reply(Settings.messagePrefix + "You already have a command named `" + commandName + "`!", event);
             return;
         }
 

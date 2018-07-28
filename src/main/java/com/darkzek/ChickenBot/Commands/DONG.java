@@ -57,7 +57,7 @@ public class DONG extends Command {
         String dong = dongs[new Random().nextInt(dongs.length)];
         String[] info = dong.split("-");
         //Get message
-        String message = Settings.getInstance().prefix + "<" + info[0] + ">\n```" + info[1].replaceAll("\n", System.getProperty("line.separator")) + "```";
+        String message = Settings.messagePrefix + "<" + info[0] + ">\n```" + info[1].replaceAll("\n", System.getProperty("line.separator")) + "```";
 
         Reply(message, event);
 

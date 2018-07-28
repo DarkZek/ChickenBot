@@ -42,7 +42,7 @@ public class BigText extends Command {
 
                 if (args.length < 2) {
                     event.processed = true;
-                    Reply(Settings.getInstance().prefix + "You forgot to add the message to make big!\nType `>help bigtext` for more information", event);
+                    Reply(Settings.messagePrefix + "You forgot to add the message to make big!\nType `>help bigtext` for more information", event);
                     return;
                 }
 
@@ -81,7 +81,7 @@ public class BigText extends Command {
 
                 } catch (IOException e) {
                     event.processed = true;
-                    Reply(Settings.getInstance().prefix + "I'd appreciate it if you'd kindly stop trying to f*** up my program, k thx.", event);
+                    Reply(Settings.messagePrefix+ "I'd appreciate it if you'd kindly stop trying to f*** up my program, k thx.", event);
                     return;
                 }
 

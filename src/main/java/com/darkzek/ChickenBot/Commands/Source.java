@@ -25,7 +25,7 @@ public class Source extends Command{
 
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
-        Reply(Settings.getInstance().prefix + link, event);
+        Reply(Settings.messagePrefix + link, event);
         event.processed = true;
     }
 }

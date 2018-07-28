@@ -29,8 +29,6 @@ public class Emote extends Command {
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
 
-        String message = event.getMessage().getContentDisplay();
-
         //Get between all the spaces, to repmove the command bit
         String[] args = event.getArgs();
 
@@ -41,14 +39,14 @@ public class Emote extends Command {
         }
 
         if (args.length != 1) {
-            Reply(Settings.getInstance().prefix + "You forgot to add the message to emote!\nType `>help emote` for more information", event);
+            Reply(Settings.messagePrefix + "You forgot to add the message to emote!\nType `>help emote` for more information", event);
             return;
         }
 
         String emoteName = args[0].toLowerCase();
 
         if (!emotes.containsKey(emoteName)){
-            Reply(Settings.getInstance().prefix + "There is no emoji named `" + emoteName + "`!", event);
+            Reply(Settings.messagePrefix + "There is no emoji named `" + emoteName + "`!", event);
             return;
         }
 
@@ -62,14 +60,14 @@ public class Emote extends Command {
     void SetEmote(String[] message, CommandRecievedEvent event) {
 
         if (message.length != 4) {
-            Reply(Settings.getInstance().prefix + "Usage: `>emote set <Emote_Name> <Link>`", event);
+            Reply(Settings.messagePrefix + "Usage: `>emote set <Emote_Name> <Link>`", event);
             return;
         }
 
         String emoteName = message[2].toLowerCase();
 
         if (emoteName == "") {
-            Reply(Settings.getInstance().prefix + "You must put in an emoji name!", event);
+            Reply(Settings.messagePrefix + "You must put in an emoji name!", event);
             return;
         }
 
@@ -78,7 +76,7 @@ public class Emote extends Command {
 
         emotes.put(emoteName, message[3]);
 
-        Reply(Settings.getInstance().prefix + "Set the emote!", event);
+        Reply(Settings.messagePrefix + "Set the emote!", event);
     }
 
     @Override

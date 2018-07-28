@@ -45,11 +45,7 @@ public class Command {
     }
 
     public void SendMessage(String msg, MessageChannel channel) {
-        try {
-            channel.sendMessage(msg).queue();
-        } catch (InsufficientPermissionException e) {
-            return;
-        }
+        channel.sendMessage(msg).queue();
     }
 
     public void SendMessageImage(InputStream msg, MessageChannel channel) {
@@ -82,7 +78,7 @@ public class Command {
             stream = url.openStream();
             ReplyImage(stream, event);
         } catch (IOException e) {
-            Reply(Settings.getInstance().prefix + "Sorry I cant connect to the website right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
+            Reply(Settings.messagePrefix + "Sorry I cant connect to the website right now! Try again later", event);
             return;
         }
     }
@@ -92,7 +88,12 @@ public class Command {
         if (event.getChannelType() == ChannelType.PRIVATE) {
             PrivateMessageImage(message, event.getAuthor());
         } else {
-            SendMessageImage(message, event.getTextChannel());
+            try {
+                SendMessageImage(message, event.getTextChannel());
+            } catch (InsufficientPermissionException e) {
+                //Let user know what happened
+                tellUserNoPermission(event, "Image");
+            }
 
             //Only in guild chats because you cant delete messages from PM's
             if (deleteMessage) {
@@ -105,13 +106,22 @@ public class Command {
         if (event.getChannelType() == ChannelType.PRIVATE) {
             PrivateMessage(message, event.getAuthor());
         } else {
-            SendMessage(message, event.getTextChannel());
+            try {
+                SendMessage(message, event.getTextChannel());
+            } catch (InsufficientPermissionException e) {
+                //Let user know what happened
+                tellUserNoPermission(event, message);
+            }
 
             //Only in guild chats because you cant delete messages from PM's
             if (deleteMessage && event.getChannelType() == ChannelType.TEXT) {
                 event.getMessage().delete().queue();
             }
         }
+    }
+
+    protected void tellUserNoPermission(CommandRecievedEvent event, String message) {
+        PrivateMessage(Settings.messagePrefix + "I don't have permission to chat in that channel! Please ask a moderator to allow Chicken Bot to chat. \nMessage: ```" + message + "```", event.getAuthor());
     }
 
     public void PrivateMessage(String message, User user) {

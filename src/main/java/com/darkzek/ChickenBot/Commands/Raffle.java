@@ -32,7 +32,7 @@ public class Raffle extends Command {
         //Get random member
         Member member = members.get(new Random().nextInt(members.size() - 1));
 
-        Reply(Settings.getInstance().prefix + "Randomly selected " + member.getAsMention() + "!", event);
+        Reply(Settings.messagePrefix + "Randomly selected " + member.getAsMention() + "!", event);
         event.processed = true;
     }
 }

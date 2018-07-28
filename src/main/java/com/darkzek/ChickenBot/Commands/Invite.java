@@ -28,7 +28,7 @@ public class Invite extends Command{
 
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
-        Reply(Settings.getInstance().prefix + inviteLink, event);
+        Reply(Settings.messagePrefix + inviteLink, event);
         event.processed = true;
     }
 }

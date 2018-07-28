@@ -23,6 +23,7 @@ public class ChickenBot extends ListenerAdapter{
 
     //TODO: Move guild commands system to the new configuration api
     //TODO: Add better messaging system - like a language file
+    //TODO: Fix rats nest of trigger system
 
     public static JDA jda;
 

@@ -69,7 +69,7 @@ public class Summarize extends Command{
             } else {
                 if (event.getCommandName().equalsIgnoreCase("summarize")) {
                     event.processed = true;
-                    Reply(Settings.getInstance().prefix + "That command is disabled in Direct Messages", event);
+                    Reply(Settings.messagePrefix + "That command is disabled in Direct Messages", event);
                     return;
                 }
             }
@@ -139,7 +139,7 @@ public class Summarize extends Command{
 
         config.Apply();
 
-        Reply(Settings.getInstance().prefix + "Successfully toggled Summarize to `" + newValue + "`", event);
+        Reply(Settings.messagePrefix + "Successfully toggled Summarize to `" + newValue + "`", event);
         return;
     }
 }

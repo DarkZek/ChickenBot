@@ -38,17 +38,17 @@ public class Purge extends Command {
         String[] args = event.getArgs();
 
         if (args.length != 1) {
-            SendMessage(Settings.getInstance().prefix + "You forgot the amount of messages!", event.getTextChannel());
+            SendMessage(Settings.messagePrefix + "You forgot the amount of messages!", event.getTextChannel());
             return;
         }
 
         if (event.getGuild() == null) {
-            PrivateMessage(Settings.getInstance().prefix + "What are you doing!", event.getAuthor());
+            PrivateMessage(Settings.messagePrefix + "What are you doing!", event.getAuthor());
             return;
         }
 
         if (!event.getGuild().getMember(event.getAuthor()).hasPermission(Permission.MANAGE_CHANNEL)) {
-            SendMessage(Settings.getInstance().prefix + "What are you doing!", event.getTextChannel());
+            SendMessage(Settings.messagePrefix + "What are you doing!", event.getTextChannel());
             return;
         }
 
@@ -56,12 +56,12 @@ public class Purge extends Command {
         try {
             num = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            SendMessage(Settings.getInstance().prefix + " You forgot the amount of messages", event.getTextChannel());
+            SendMessage(Settings.messagePrefix + " You forgot the amount of messages", event.getTextChannel());
             return;
         }
 
         if (num > 100) {
-            Reply(Settings.getInstance().prefix + "Due to Discord's limitations I cannot purge more than 100 messages at a time", event);
+            Reply(Settings.messagePrefix + "Due to Discord's limitations I cannot purge more than 100 messages at a time", event);
             return;
         }
 
@@ -75,7 +75,7 @@ public class Purge extends Command {
             event.getTextChannel().deleteMessages(test).queue();
             return;
         } catch (InsufficientPermissionException e) {
-            Reply(Settings.getInstance().prefix + "I don't have permission! Please add permission `MESSAGE_MANAGE` to use this feature", event);
+            Reply(Settings.messagePrefix + "I don't have permission! Please add permission `MESSAGE_MANAGE` to use this feature", event);
             return;
         }
     }

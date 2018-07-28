@@ -73,7 +73,7 @@ public class Dankmeme extends Command {
             message = tmp.toString();
 
         } catch (IOException e) {
-            Reply(Settings.getInstance().prefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
+            Reply(Settings.messagePrefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
             return null;
         }
 
