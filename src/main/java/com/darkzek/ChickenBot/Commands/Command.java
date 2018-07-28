@@ -4,10 +4,7 @@ import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
@@ -48,6 +45,10 @@ public class Command {
         channel.sendMessage(msg).queue();
     }
 
+    public void SendMessage(MessageEmbed msg, MessageChannel channel) {
+        channel.sendMessage(msg).queue();
+    }
+
     public void SendMessageImage(InputStream msg, MessageChannel channel) {
         try {
             channel.sendFile(msg, "File.png").queue();
@@ -61,6 +62,12 @@ public class Command {
         if (message.length() > 2000) {
             message = message.substring(0, 1993) + "```...";
         }
+
+        Reply(message, event, false);
+    }
+
+    public void Reply(MessageEmbed message, CommandRecievedEvent event) {
+        event.processed = true;
 
         Reply(message, event, false);
     }
@@ -101,7 +108,26 @@ public class Command {
             }
         }
     }
+
     public void Reply(String message, CommandRecievedEvent event, boolean deleteMessage) {
+        event.processed = true;
+        if (event.getChannelType() == ChannelType.PRIVATE) {
+            PrivateMessage(message, event.getAuthor());
+        } else {
+            try {
+                SendMessage(message, event.getTextChannel());
+            } catch (InsufficientPermissionException e) {
+                //Let user know what happened
+                tellUserNoPermission(event, message);
+            }
+
+            //Only in guild chats because you cant delete messages from PM's
+            if (deleteMessage && event.getChannelType() == ChannelType.TEXT) {
+                event.getMessage().delete().queue();
+            }
+        }
+    }
+    public void Reply(MessageEmbed message, CommandRecievedEvent event, boolean deleteMessage) {
         event.processed = true;
         if (event.getChannelType() == ChannelType.PRIVATE) {
             PrivateMessage(message, event.getAuthor());
@@ -124,7 +150,21 @@ public class Command {
         PrivateMessage(Settings.messagePrefix + "I don't have permission to chat in that channel! Please ask a moderator to allow Chicken Bot to chat. \nMessage: ```" + message + "```", event.getAuthor());
     }
 
+    protected void tellUserNoPermission(CommandRecievedEvent event, MessageEmbed message) {
+        PrivateMessage(Settings.messagePrefix + "I don't have permission to chat in that channel! Please ask a moderator to allow Chicken Bot to chat. \nMessage:", event.getAuthor());
+        PrivateMessage(message, event.getAuthor());
+    }
+
     public void PrivateMessage(String message, User user) {
+        if (user.hasPrivateChannel()) {
+            user.openPrivateChannel().queue();
+        }
+
+        PrivateChannel channel = user.openPrivateChannel().complete();
+
+        channel.sendMessage(message).queue();
+    }
+    public void PrivateMessage(MessageEmbed message, User user) {
         if (user.hasPrivateChannel()) {
             user.openPrivateChannel().queue();
         }
@@ -142,6 +182,5 @@ public class Command {
 
         channel.sendFile(message, "File.png").queue();
     }
-
 
 }

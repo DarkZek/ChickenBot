@@ -46,12 +46,12 @@ public class Dankmeme extends Command {
             }
         }
 
-        event.getChannel().sendMessage(new EmbedBuilder()
+        Reply(new EmbedBuilder()
                 .setTitle(post.title, null)
                 .setColor(Color.BLUE)
                 .setFooter(post.upvotes + " upvotes", null)
                 .setImage(post.imageLink)
-                .build()).queue();
+                .build(), event);
 
         event.processed = true;
     }

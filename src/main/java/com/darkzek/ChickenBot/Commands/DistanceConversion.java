@@ -98,12 +98,12 @@ public class DistanceConversion extends Command {
         }
 
         //Generate embed
-        event.getChannel().sendMessage(new EmbedBuilder()
+        Reply(new EmbedBuilder()
                 .setColor(new Color(16138809))
                 .addField(response.origionalNumber + " " + response.origionalMeasurement + " is ", "`" + response.convertedNumber + " " + response.newMeasurement + "`", false)
                 .addField("or", "`" + String.valueOf(response.bananas) + " bananas`", false)
                 .setFooter("Admins: Use the command >DistanceConversion to disable this feature", null)
-                .build()).queue();
+                .build(), event);
 
         event.processed = true;
     }

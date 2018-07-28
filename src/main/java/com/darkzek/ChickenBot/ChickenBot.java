@@ -24,6 +24,7 @@ public class ChickenBot extends ListenerAdapter{
     //TODO: Move guild commands system to the new configuration api
     //TODO: Add better messaging system - like a language file
     //TODO: Fix rats nest of trigger system
+    //TODO: Fix chat <a href="http://en.wikipedia.org/wiki/Art" target="_blank">Art</a> is the production of what is beautiful, appealing, or of more than ordinary significance. More about art?
 
     public static JDA jda;
 
