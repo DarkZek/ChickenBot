@@ -34,7 +34,7 @@ public class ErrorReport {
     }
 
     private String FileReport() {
-        String msg = "Hey man, we just blew a fuse!\n";
+        String msg = "Hey man, we just blew a fuse! This message has been reported to DarkZek#8647\n";
 
         for (Map.Entry<String, String> entry : objects) {
             msg += entry.getKey() + ": " + entry.getValue() + "\n";

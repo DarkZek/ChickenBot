@@ -27,7 +27,7 @@ public class Chat extends Command {
         this.showInHelp = false;
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.MESSAGE_SENT), "");
         this.trigger.SetIgnoreCase(true);
-        this.trigger.IncludeBots(true);
+        this.trigger.IncludeBots(false);
         this.trigger.messageType = MessageType.BOTH;
 
         SetupBot();

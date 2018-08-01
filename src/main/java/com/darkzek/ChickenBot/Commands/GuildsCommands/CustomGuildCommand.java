@@ -35,7 +35,7 @@ public class CustomGuildCommand extends Command {
             return;
         }
 
-        String commandName = args[1].toLowerCase();
+        String commandName = args[0].toLowerCase();
 
         switch (commandName) {
             case "help": {
