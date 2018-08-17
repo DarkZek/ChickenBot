@@ -12,7 +12,7 @@ import java.util.*;
 
 public class GuildManager {
 
-    GuildSettings[] guilds;
+    GuildSettings[] guilds = new GuildSettings[0];
 
     private static GuildManager guildManager = new GuildManager( );
 
