@@ -1,6 +1,7 @@
 package com.darkzek.ChickenBot.Commands.GuildsCommands;
 
 import com.darkzek.ChickenBot.Commands.Command;
+import com.darkzek.ChickenBot.Configuration.GuildConfiguration;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
+import java.util.Set;
 
 public class CustomGuildCommand extends Command {
 
@@ -30,12 +32,17 @@ public class CustomGuildCommand extends Command {
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
         String[] args = event.getArgs();
-        if (args.length != 1) {
+        if (args.length == 0) {
             Reply(Settings.messagePrefix + "Usage: >guildcommand <command>", event);
             return;
         }
 
         String commandName = args[0].toLowerCase();
+
+        for (String cmd:args) {
+            System.out.println(cmd);
+        }
+        System.out.println("test");
 
         switch (commandName) {
             case "help": {
@@ -54,33 +61,18 @@ public class CustomGuildCommand extends Command {
                 break;
             }
             case "list": {
-                ListCommands(event, args);
+                SayCommands(event);
                 break;
             }
             default: {
-                Reply(Settings.messagePrefix + "Usage: >guildcommand <command>", event);
+                Reply(Settings.messagePrefix + "Usage: >guildcommand <command>" + commandName, event);
                 break;
             }
         }
     }
 
-    public void ListCommands(CommandRecievedEvent event, String[] args) {
-        GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getTextChannel().getId());
-
-        GuildCommand[] commands = guild.commands;
-
-        String msg = "Currently this guild has `" + guild.commands.length+ "` commands\n```";
-
-        for (com.darkzek.ChickenBot.Guilds.GuildCommand command : commands) {
-            msg += command.activator + " | " + command.result + "\n";
-        }
-        msg += "```";
-
-        Reply(msg , event);
-    }
-
     public void RemoveCommand(CommandRecievedEvent event, String[] args) {
-        if (args.length != 3) {
+        if (args.length != 2) {
             Reply(Settings.messagePrefix + "Usage: >guildcommand remove <command_name>", event);
             return;
         }
@@ -89,7 +81,7 @@ public class CustomGuildCommand extends Command {
             return;
         }
 
-        String commandName = args[2];
+        String commandName = args[1];
 
         GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getTextChannel().getId());
 
@@ -97,16 +89,7 @@ public class CustomGuildCommand extends Command {
 
         GuildManager.getInstance().SetGuild(guild);
 
-        GuildCommand[] commands = guild.commands;
-
-        String msg = "Currently this guild has `" + guild.commands.length+ "` commands```";
-
-        for (com.darkzek.ChickenBot.Guilds.GuildCommand command : commands) {
-            msg += command.activator + " | " + command.result + "\n";
-        }
-        msg += "```";
-
-        Reply(msg , event);
+        SayCommands(event);
     }
 
     public void AddCommand(CommandRecievedEvent event, String[] args) {
@@ -119,11 +102,11 @@ public class CustomGuildCommand extends Command {
             return;
         }
 
-        String commandName = args[2];
+        String commandName = args[1];
 
         String message = "";
 
-        for (int i = 3; i < args.length; i++) {
+        for (int i = 2; i < args.length; i++) {
             message += args[i] + " ";
         }
 
@@ -139,7 +122,22 @@ public class CustomGuildCommand extends Command {
 
         GuildManager.getInstance().SetGuild(guild);
 
-        Reply("Currently this guild has `" + guild.commands.length+ "` commands" , event);
+        SayCommands(event);
+    }
+
+    private void SayCommands(CommandRecievedEvent event) {
+
+        String guildId = event.getTextChannel().getId();
+        GuildManager manager = GuildManager.getInstance();
+
+        GuildSettings guild = manager.GetGuildSettings(guildId);
+
+        if (!manager.GuildHasCustomCommands(guildId)) {
+            Reply(Settings.messagePrefix + "This guild has no custom commands!", event);
+            return;
+        }
+
+        Reply("Currently this guild has " + guild.commands.length + " commands" , event);
 
         GuildCommand[] commands = guild.commands;
 

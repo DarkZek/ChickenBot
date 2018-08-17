@@ -28,7 +28,7 @@ public class Summarize extends Command{
     private final String configName = "Summarize.enabled";
 
     public Summarize() {
-        this.description = "Summarize's links in chat (Just chat links)";
+        this.description = "Toggles tldr; messages";
         this.name = "Summarize";
         this.type = CommandType.INTERNET;
         this.usage = ">summarize to toggle";
@@ -136,7 +136,6 @@ public class Summarize extends Command{
         }
 
         config.SetObject(configName, newValue);
-
         config.Apply();
 
         Reply(Settings.messagePrefix + "Successfully toggled Summarize to `" + newValue + "`", event);
