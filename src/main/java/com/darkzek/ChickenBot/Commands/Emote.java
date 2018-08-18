@@ -59,12 +59,12 @@ public class Emote extends Command {
 
     void SetEmote(String[] message, CommandRecievedEvent event) {
 
-        if (message.length != 4) {
+        if (message.length != 3) {
             Reply(Settings.messagePrefix + "Usage: `>emote set <Emote_Name> <Link>`", event);
             return;
         }
 
-        String emoteName = message[2].toLowerCase();
+        String emoteName = message[1].toLowerCase();
 
         if (emoteName == "") {
             Reply(Settings.messagePrefix + "You must put in an emoji name!", event);
@@ -74,7 +74,7 @@ public class Emote extends Command {
         //Remove any other ones with that name
         emotes.remove(emoteName);
 
-        emotes.put(emoteName, message[3]);
+        emotes.put(emoteName, message[2]);
 
         Reply(Settings.messagePrefix + "Set the emote!", event);
     }
