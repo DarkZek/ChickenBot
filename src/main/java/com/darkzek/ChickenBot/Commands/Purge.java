@@ -77,6 +77,8 @@ public class Purge extends Command {
         } catch (InsufficientPermissionException e) {
             Reply(Settings.messagePrefix + "I don't have permission! Please add permission `MESSAGE_MANAGE` to use this feature", event);
             return;
+        } catch (Exception e) {
+            //When command spammed unknown errors occur, so lets ignore them
         }
     }
 }

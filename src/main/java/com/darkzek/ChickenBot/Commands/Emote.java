@@ -29,7 +29,7 @@ public class Emote extends Command {
     @Override
     public void MessageRecieved(CommandRecievedEvent event) {
 
-        //Get between all the spaces, to repmove the command bit
+        //Get between all the spaces, to remove the command bit
         String[] args = event.getArgs();
 
         //Check if they want to set a new emote

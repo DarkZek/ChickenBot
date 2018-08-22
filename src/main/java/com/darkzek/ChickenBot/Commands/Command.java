@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.core.exceptions.PermissionException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,7 +105,11 @@ public class Command {
 
             //Only in guild chats because you cant delete messages from PM's
             if (deleteMessage) {
-                event.getMessage().delete().queue();
+                try {
+                    event.getMessage().delete().queue();
+                } catch (PermissionException e) {
+
+                }
             }
         }
     }
@@ -123,7 +128,11 @@ public class Command {
 
             //Only in guild chats because you cant delete messages from PM's
             if (deleteMessage && event.getChannelType() == ChannelType.TEXT) {
-                event.getMessage().delete().queue();
+                try {
+                    event.getMessage().delete().queue();
+                } catch (PermissionException e) {
+
+                }
             }
         }
     }
@@ -141,7 +150,11 @@ public class Command {
 
             //Only in guild chats because you cant delete messages from PM's
             if (deleteMessage && event.getChannelType() == ChannelType.TEXT) {
-                event.getMessage().delete().queue();
+                try {
+                    event.getMessage().delete().queue();
+                } catch (PermissionException e) {
+
+                }
             }
         }
     }
