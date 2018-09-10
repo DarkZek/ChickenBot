@@ -48,7 +48,7 @@ public class GuildCommandExecutor extends Command {
             m = m.substring(index);
         }
 
-        String guildId = event.getTextChannel().getId();
+        String guildId = event.getGuild().getId();
 
         //Check if the guild has made custom commands
         if (!manager.GuildHasCustomCommands(guildId)) {

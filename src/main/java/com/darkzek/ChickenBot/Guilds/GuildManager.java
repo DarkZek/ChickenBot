@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GuildManager {
 
@@ -28,6 +31,13 @@ public class GuildManager {
             SaveGuilds();
             //Disconnect
         }));
+
+        //Periodically save guilds incase of power failure (Whoops)
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        ses.scheduleAtFixedRate(() -> {
+            System.out.println("Saving guild configuration...");
+            SaveGuilds();
+        }, 24, 24, TimeUnit.HOURS);
     }
 
     private void LoadGuilds() {

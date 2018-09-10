@@ -39,11 +39,6 @@ public class CustomGuildCommand extends Command {
 
         String commandName = args[0].toLowerCase();
 
-        for (String cmd:args) {
-            System.out.println(cmd);
-        }
-        System.out.println("test");
-
         switch (commandName) {
             case "help": {
                 Reply(Settings.messagePrefix + "Guild command is used for servers to have their own custom commands.\n```" +
@@ -83,7 +78,7 @@ public class CustomGuildCommand extends Command {
 
         String commandName = args[1];
 
-        GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getTextChannel().getId());
+        GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getGuild().getId());
 
         guild.RemoveCommand(commandName);
 
@@ -110,7 +105,7 @@ public class CustomGuildCommand extends Command {
             message += args[i] + " ";
         }
 
-        GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getTextChannel().getId());
+        GuildSettings guild = GuildManager.getInstance().GetGuildSettings(event.getGuild().getId());
 
         if (guild.HasCommand(commandName)) {
             //Server already has command
@@ -127,7 +122,7 @@ public class CustomGuildCommand extends Command {
 
     private void SayCommands(CommandRecievedEvent event) {
 
-        String guildId = event.getTextChannel().getId();
+        String guildId = event.getGuild().getId();
         GuildManager manager = GuildManager.getInstance();
 
         GuildSettings guild = manager.GetGuildSettings(guildId);
