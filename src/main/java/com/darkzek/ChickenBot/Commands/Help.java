@@ -6,9 +6,11 @@ import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
+import com.darkzek.ChickenBot.Version;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Created by darkzek on 28/02/18.
@@ -61,7 +63,7 @@ public class Help extends Command {
                 }
             }
         }
-        message += "\nCreated by DarkZek#8647. PM me for any feature requests or bug reports :)```";
+        message += "\nCreated by DarkZek#8647. PM me for any feature requests or bug reports :)   |   Chicken Bot V" + Version.getVersion() + "```";
 
         PrivateMessage(message, event.getAuthor());
         event.processed = true;

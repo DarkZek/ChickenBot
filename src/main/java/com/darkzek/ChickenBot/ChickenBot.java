@@ -15,6 +15,7 @@ import javax.security.auth.login.LoginException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Set;
 
 /**
  * Created by darkzek on 21/02/18.
@@ -71,15 +72,15 @@ public class ChickenBot extends ListenerAdapter{
         }));
 
         if (!runningFromIntelliJ()) {
-            TellMe("Started ChickenBot with version " + new Version().getVersion());
+            TellMe("Started ChickenBot with version " + Version.getVersion());
         }
 
-        //Add the events listner to listen for stuff
+        //Add the events listener to listen for stuff
         jda.addEventListener(new EventsListener());
 
         jda.getPresence().setGame(Game.playing(">help | " + jda.getGuilds().size() + " servers"));
 
-        System.out.println("Started Chicken Bot V1");
+        System.out.println("Started Chicken Bot V" + Version.getVersion());
     }
 
     public static void TellMe(String message) {

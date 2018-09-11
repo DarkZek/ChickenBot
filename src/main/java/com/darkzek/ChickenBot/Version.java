@@ -6,10 +6,20 @@ import java.util.Properties;
 
 public class Version {
 
-    public String getVersion()
+    private static String version;
+
+    public static String getVersion() {
+        if (version == null) {
+            version = findVersion();
+        }
+
+        return version;
+    }
+
+    private static String findVersion()
     {
         String path = "/version.prop";
-        InputStream stream = getClass().getResourceAsStream(path);
+        InputStream stream = new Version().getClass().getResourceAsStream(path);
         if (stream == null)
             return "UNKNOWN";
         Properties props = new Properties();
@@ -18,7 +28,7 @@ public class Version {
             stream.close();
             return (String) props.get("version");
         } catch (IOException e) {
-            return "UNKNOWN";
+            return "UNKNOWN VERSION";
         }
     }
 

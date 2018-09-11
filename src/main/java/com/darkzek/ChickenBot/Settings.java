@@ -12,7 +12,6 @@ public class Settings {
 
     public static String enabler = ">";
     public static String messagePrefix = "Brawk!\n";
-
     private static Settings settings = new Settings( );
 
     private Settings() {}

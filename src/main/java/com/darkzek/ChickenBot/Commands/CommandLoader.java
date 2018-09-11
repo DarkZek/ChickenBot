@@ -34,6 +34,7 @@ public class CommandLoader {
         commands.add(new RemindMe());
         commands.add(new BotTaunt());
         commands.add(new Summarize());
+        commands.add(new ChangeLog());
 
         System.out.println("Successfully loaded all Commands");
     }
