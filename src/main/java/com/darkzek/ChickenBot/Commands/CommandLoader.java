@@ -23,7 +23,6 @@ public class CommandLoader {
         commands.add(new Dankmeme());
         commands.add(new DONG());
         commands.add(new Invite());
-        commands.add(new Raffle());
         commands.add(new CustomGuildCommand());
         commands.add(new GuildCommandExecutor());
         commands.add(new Source());
