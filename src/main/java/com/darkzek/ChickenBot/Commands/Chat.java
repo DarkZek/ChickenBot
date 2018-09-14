@@ -14,6 +14,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class Chat extends Command {
 
@@ -67,6 +68,9 @@ public class Chat extends Command {
         } catch (Exception e) {
             response = "Error coming up with witty response!```" + e.fillInStackTrace() + "```";
         }
+
+        //Remove HTML tags
+        response = Pattern.compile("<.+?>").matcher(response).replaceAll("");
 
         Reply(Settings.messagePrefix + response, event);
     }
