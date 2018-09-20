@@ -3,6 +3,7 @@ package com.darkzek.ChickenBot;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
@@ -50,6 +51,7 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
+
         if (event.getAuthor() == event.getJDA().getSelfUser()) {
             return;
         }
