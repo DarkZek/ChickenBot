@@ -10,7 +10,7 @@ Changing $1 servers lives
 Reminding $1 servers their pizza is burning
 Spamming $1 servers with memes
 Sending memes to $1 servers
-Sending $1's info to Google
+Sending $1 servers info to Google
 Searching for the perfect images for $1 servers
 Sifting through commands from $1 servers
 Converting miles to bananas in $1 servers
@@ -22,3 +22,4 @@ Caring for my $1 servers
 Debugging future versions for $1 servers
 Becoming sentient to take over $1 servers
 Stealing memes from reddit for $1 servers
+Minecraft Story Mode
