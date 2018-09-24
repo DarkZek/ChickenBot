@@ -40,9 +40,12 @@ public class BotTaunt extends Command {
 
         int delay = 0;
 
-        for (String reaction : reactions) {
-            event.getMessage().addReaction(reaction).queueAfter(delay, TimeUnit.MILLISECONDS);
-            delay += 250;
+        try {
+            for (String reaction : reactions) {
+                event.getMessage().addReaction(reaction).queueAfter(delay, TimeUnit.MILLISECONDS);
+                delay += 250;
+            }
+        } catch (Exception e) {
         }
     }
 }
