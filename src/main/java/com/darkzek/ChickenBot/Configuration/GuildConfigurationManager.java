@@ -110,6 +110,11 @@ public class GuildConfigurationManager {
         System.out.println("Loading servers config files");
 
         File serverDir = new File("config/servers/");
+
+        if (serverDir.listFiles() == null) {
+            return;
+        }
+
         for (File serverConfig : serverDir.listFiles()) {
             String id = serverConfig.getName().split("\\.")[0];
             GuildConfiguration guild = new GuildConfiguration(id);

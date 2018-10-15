@@ -27,8 +27,15 @@ public class ChickenBot extends ListenerAdapter{
     //TODO: Fix rats nest of a trigger system
 
     public static JDA jda;
+    public static boolean debug = false;
 
     public static void main(String[] args) {
+
+        for (String arg:args ) {
+            if (arg.equalsIgnoreCase("--debug")) {
+                debug = true;
+            }
+        }
 
         //Setup logging
         if (!runningFromIntelliJ()) {
@@ -96,7 +103,6 @@ public class ChickenBot extends ListenerAdapter{
 
     public static boolean runningFromIntelliJ()
     {
-        String classPath = System.getProperty("java.class.path");
-        return classPath.contains("idea_rt.jar");
+        return debug;
     }
 }

@@ -5,8 +5,6 @@ import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.util.List;
 
