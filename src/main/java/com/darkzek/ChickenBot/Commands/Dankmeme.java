@@ -9,9 +9,7 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -56,7 +54,11 @@ public class Dankmeme extends Command {
             }
         }
 
-        SendMeme(post, event.getTextChannel());
+        if (event.getChannelType() == ChannelType.PRIVATE) {
+            DirectSendMeme(post, event.getAuthor());
+        } else {
+            SendMeme(post, event.getTextChannel());
+        }
         event.processed = true;
     }
 
@@ -69,6 +71,21 @@ public class Dankmeme extends Command {
                 .build();
 
         Message message = channel.sendMessage(builder).complete();
+
+        if (message != null) {
+            message.addReaction(GlobalEmote.CALL_ME.toString()).queue();
+        }
+    }
+
+    public static void DirectSendMeme(RedditPost post, User sender) {
+        MessageEmbed builder = new EmbedBuilder()
+                .setTitle(post.title, null)
+                .setColor(Color.BLUE)
+                .setFooter(post.upvotes + " upvotes | React :call_me: for more", null)
+                .setImage(post.imageLink)
+                .build();
+
+        Message message = sender.openPrivateChannel().complete().sendMessage(builder).complete();
 
         if (message != null) {
             message.addReaction(GlobalEmote.CALL_ME.toString()).queue();

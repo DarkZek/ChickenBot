@@ -93,6 +93,7 @@ public class Trigger {
             new ErrorReport().AddField("Name", event.getCommandName()).
                     AddField("Message", event.getMessage().getContentDisplay()).
                     AddField("User", event.getAuthor().getAsMention()).
+                    AddField("Error", e.getLocalizedMessage()).
                     AddField("Command", command.name).
                     AddStacktrace(e).
                     Report(event.getTextChannel());

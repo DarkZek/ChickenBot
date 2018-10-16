@@ -6,6 +6,7 @@ import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -58,7 +59,11 @@ public class DankMemeEmotes extends Command {
             }
         }
 
-        Dankmeme.SendMeme(post, event.getTextChannel());
+        if (event.getChannelType() == ChannelType.PRIVATE) {
+            Dankmeme.DirectSendMeme(post, event.getUser());
+        } else {
+            Dankmeme.SendMeme(post, event.getTextChannel());
+        }
 
     }
 }
