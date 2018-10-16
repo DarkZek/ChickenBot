@@ -5,8 +5,10 @@ import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.emote.EmoteAddedEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 
@@ -32,6 +34,10 @@ public class Command {
 
     public void MessageDeleted(MessageDeleteEvent event) {
         Log("[ERROR] Unhandled message deleted event for command " + name);
+    }
+
+    public void EmoteAdded(MessageReactionAddEvent event) {
+        Log("[ERROR] Unhandled emote added event for command " + name);
     }
 
     public void OnShutdown() {

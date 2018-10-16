@@ -4,7 +4,9 @@ import com.darkzek.ChickenBot.Commands.Command;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
+import net.dv8tion.jda.core.events.emote.EmoteAddedEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 
 import java.util.List;
 
@@ -139,6 +141,15 @@ public class Trigger {
         command.MessageDeleted(event);
     }
 
+    public void Emote(MessageReactionAddEvent event) {
+        if (arg != "" && !event.getReactionEmote().getName().equalsIgnoreCase(arg)) {
+            //Not the emote we're looking for
+            //return;
+        }
+
+        command.EmoteAdded(event);
+    }
+
     public void Setup() {
         //Let the command manager know what we're listening for
 
@@ -162,6 +173,10 @@ public class Trigger {
                 }
                 case BOT_SHUTDOWN: {
                     CommandManager.getInstance().shutdownTriggers.add(this);
+                    break;
+                }
+                case EMOTE_ADDED: {
+                    CommandManager.getInstance().emoteTriggers.add(this);
                     break;
                 }
             }

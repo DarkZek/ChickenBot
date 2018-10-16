@@ -21,6 +21,7 @@ public class CommandLoader {
         commands.add(new Search());
         commands.add(new UnixPorn());
         commands.add(new Dankmeme());
+        commands.add(new DankMemeEmotes());
         commands.add(new DONG());
         commands.add(new Invite());
         commands.add(new CustomGuildCommand());

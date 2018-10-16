@@ -1,5 +1,6 @@
 package com.darkzek.ChickenBot.Commands;
 
+import com.darkzek.ChickenBot.Enums.GlobalEmote;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
@@ -10,8 +11,12 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -27,12 +32,17 @@ import java.util.Random;
  */
 public class Dankmeme extends Command {
 
+    public static RedditPost bufferRedditPost;
+
     public Dankmeme() {
         this.description = "Gets the latest from /r/dankmemes";
         this.name = "Dankmeme";
         this.usage = ">dankmeme";
         this.trigger = new Trigger(this, Arrays.asList(TriggerType.COMMAND), "dankmeme");
         this.trigger.messageType = MessageType.BOTH;
+
+        //Fill buffer
+        Dankmeme.bufferRedditPost = Dankmeme.GetRandomPost();
     }
 
     @Override
@@ -40,23 +50,45 @@ public class Dankmeme extends Command {
         RedditPost post;
 
         while (true) {
-            post = GetRandomPost(event);
+            post = getMeme();
             if (post != null) {
                 break;
             }
         }
 
-        Reply(new EmbedBuilder()
-                .setTitle(post.title, null)
-                .setColor(Color.BLUE)
-                .setFooter(post.upvotes + " upvotes", null)
-                .setImage(post.imageLink)
-                .build(), event);
-
+        SendMeme(post, event.getTextChannel());
         event.processed = true;
     }
 
-    public RedditPost GetRandomPost(CommandRecievedEvent event) {
+    public static void SendMeme(RedditPost post, TextChannel channel) {
+        MessageEmbed builder = new EmbedBuilder()
+                .setTitle(post.title, null)
+                .setColor(Color.BLUE)
+                .setFooter(post.upvotes + " upvotes | React :call_me: for more", null)
+                .setImage(post.imageLink)
+                .build();
+
+        Message message = channel.sendMessage(builder).complete();
+
+        if (message != null) {
+            message.addReaction(GlobalEmote.CALL_ME.toString()).queue();
+        }
+    }
+
+    public static RedditPost getMeme() {
+
+        //Get new reddit post
+        Thread thread = new Thread(() -> Dankmeme.bufferRedditPost = Dankmeme.GetRandomPost());
+
+        thread.start();
+        if (bufferRedditPost == null) {
+            return GetRandomPost();
+        } else {
+            return bufferRedditPost;
+        }
+    }
+
+    public static RedditPost GetRandomPost() {
 
         String message = "";
         //Connect to reddit
@@ -73,8 +105,7 @@ public class Dankmeme extends Command {
             message = tmp.toString();
 
         } catch (IOException e) {
-            Reply(Settings.messagePrefix + "Sorry I cant connect to reddit right now! Try again later\n```" + e.fillInStackTrace() + "```", event);
-            return null;
+            return new RedditPost(0, "https://png.pngtree.com/element_origin_min_pic/16/09/30/1357edfe28ef21f.jpg", "Sorry I cant connect to reddit right now! Try again later");
         }
 
         JSONObject json = new JSONObject(message);

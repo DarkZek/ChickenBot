@@ -5,9 +5,11 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.emote.EmoteAddedEvent;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -26,6 +28,7 @@ public class CommandManager extends ListenerAdapter {
     public List<Trigger> messageTriggers = new ArrayList<>();
     public List<Trigger> deletedTriggers = new ArrayList<>();
     public List<Trigger> shutdownTriggers = new ArrayList<>();
+    public List<Trigger> emoteTriggers = new ArrayList<>();
 
     private CommandManager() {}
 
@@ -89,6 +92,17 @@ public class CommandManager extends ListenerAdapter {
         try {
             for(Trigger trigger : shutdownTriggers) {
                 trigger.Shutdown();
+            }
+        } catch (Exception e) {
+            new ErrorReport().AddField("Name", "Shutdown Event").AddStacktrace(e).Report();
+        }
+    }
+
+    @Override
+    public void onMessageReactionAdd(MessageReactionAddEvent event) {
+        try {
+            for(Trigger trigger : emoteTriggers) {
+                trigger.Emote(event);
             }
         } catch (Exception e) {
             new ErrorReport().AddField("Name", "Shutdown Event").AddStacktrace(e).Report();
