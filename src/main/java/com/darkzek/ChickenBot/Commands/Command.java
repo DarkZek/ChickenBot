@@ -110,12 +110,10 @@ public class Command {
             }
 
             //Only in guild chats because you cant delete messages from PM's
-            if (deleteMessage) {
+            if (deleteMessage && event.getChannelType() == ChannelType.TEXT) {
                 try {
                     event.getMessage().delete().queue();
-                } catch (PermissionException e) {
-
-                }
+                } catch (PermissionException e) { }
             }
         }
     }
