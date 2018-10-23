@@ -13,11 +13,14 @@ import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import karimo94.Summarizer;
 import net.dv8tion.jda.core.entities.ChannelType;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +29,9 @@ public class Summarize extends Command{
     private Summarizer summarizer = new Summarizer();
     private int minSentenceLength = 30;
     private final String configName = "Summarize.enabled";
+
+    String fileName = "SummarizeIgnore.txt";
+    String[] blockedDomains;
 
     public Summarize() {
         this.description = "Toggles tldr; messages";
@@ -36,6 +42,27 @@ public class Summarize extends Command{
         this.trigger.messageType = MessageType.BOTH;
 
         manager = GuildConfigurationManager.getInstance();
+
+        LoadBlockedDomains();
+    }
+
+    private void LoadBlockedDomains() {
+        File file = new File(fileName);
+        ArrayList<String> fileList = new ArrayList<>();
+        try {
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNext()) {
+                String token = scanner.nextLine();
+                fileList.add(token);
+            }
+
+            blockedDomains = fileList.toArray(new String[fileList.size()]);
+            return;
+        } catch (IOException e) {
+        } catch (NoSuchElementException e) {
+        }
+        System.out.println("[ERROR] Cannot load " + name + "!");
+        System.exit(1);
     }
 
     private GuildConfigurationManager manager;
@@ -51,7 +78,6 @@ public class Summarize extends Command{
     public void MessageRecieved(CommandRecievedEvent event) {
 
         //Run async
-
         new Thread(() -> {
 
             if (event.getChannelType() == ChannelType.TEXT) {
@@ -79,13 +105,18 @@ public class Summarize extends Command{
                 return;
             }
 
-            //Link found!
-            String link = event.getMessage().getContentRaw().substring(matcher.start(), matcher.end());
-
-            String websiteData = "";
+            String websiteData;
 
             try {
-                URLConnection url = new URL(link).openConnection();
+                URL link = new URL(event.getMessage().getContentRaw().substring(matcher.start(), matcher.end()));
+
+                for (String blockedDomain : blockedDomains) {
+                    if (link.getHost().equalsIgnoreCase(blockedDomain)) {
+                        return;
+                    }
+                }
+
+                URLConnection url = link.openConnection();
 
                 Scanner scanner = new Scanner(url.getInputStream());
                 scanner.useDelimiter("\\Z");
