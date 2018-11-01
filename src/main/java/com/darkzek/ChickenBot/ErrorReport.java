@@ -67,15 +67,19 @@ public class ErrorReport {
     }
 
     public void Report() {
-        FileReport();
+        try {
+            FileReport();
+        } catch (Exception e) {
+            //Don't throw another exception
+        }
     }
 
     public void Report(TextChannel channel) {
-        String msg = FileReport();
         try {
+            String msg = FileReport();
             channel.sendMessage(msg).queue();
-        } catch (PermissionException e) {
-
+        } catch (Exception e) {
+            //Don't throw another exception
         }
     }
 }
