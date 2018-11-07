@@ -5,16 +5,10 @@ import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.RedditPost;
-import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.channel.text.GenericTextChannelEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -22,15 +16,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by darkzek on 31/03/18.
  */
 public class Dankmeme extends Command {
 
-    public static RedditPost bufferRedditPost;
+    public static Queue<RedditPost> bufferRedditPost = new LinkedList();
 
     public Dankmeme() {
         this.description = "Gets the latest from /r/dankmemes";
@@ -40,7 +33,7 @@ public class Dankmeme extends Command {
         this.trigger.messageType = MessageType.BOTH;
 
         //Fill buffer
-        Dankmeme.bufferRedditPost = Dankmeme.GetRandomPost();
+        RefreshBuffer();
     }
 
     @Override
@@ -94,23 +87,25 @@ public class Dankmeme extends Command {
 
     public static RedditPost getMeme() {
 
-        //Get new reddit post
-        Thread thread = new Thread(() -> Dankmeme.bufferRedditPost = Dankmeme.GetRandomPost());
+        if (bufferRedditPost.size() <= 5) {
+            //Load new meme
+            Thread thread = new Thread(() -> RefreshBuffer());
 
-        thread.start();
+            thread.start();
+        }
+
         if (bufferRedditPost == null) {
-            return GetRandomPost();
+            return new RedditPost(0, "", "Error getting reddit post");
         } else {
-            return bufferRedditPost;
+            return bufferRedditPost.remove();
         }
     }
 
-    public static RedditPost GetRandomPost() {
-
+    public static void RefreshBuffer() {
         String message = "";
         //Connect to reddit
         try {
-            URL url = new URL("https://www.reddit.com/user/kerdaloo/m/dankmemer/top/.json?sort=top&t=day&limit=100");
+            URL url = new URL("https://www.reddit.com/user/kerdaloo/m/dankmemer/top/.json?sort=top&t=day&limit=1000");
             HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setRequestProperty("User-agent", "Chicken-Bot");
             String line = null;
@@ -122,20 +117,22 @@ public class Dankmeme extends Command {
             message = tmp.toString();
 
         } catch (IOException e) {
-            return new RedditPost(0, "https://png.pngtree.com/element_origin_min_pic/16/09/30/1357edfe28ef21f.jpg", "Sorry I cant connect to reddit right now! Try again later");
+            return;
         }
 
         JSONObject json = new JSONObject(message);
 
-        JSONObject data = json.getJSONObject("data").getJSONArray("children").getJSONObject(new Random().nextInt(100)).getJSONObject("data");
+        for (int i = 0; i < 15; i++) {
+            JSONObject data = json.getJSONObject("data").getJSONArray("children").getJSONObject(new Random().nextInt(100)).getJSONObject("data");
 
-        //Get the data
-        int upvotes = data.getInt("score");
-        String link = data.getString("url");
-        String title = data.getString("title");
+            //Get the data
+            int upvotes = data.getInt("score");
+            String link = data.getString("url");
+            String title = data.getString("title");
 
-        RedditPost post = new RedditPost(upvotes, link, title);
+            RedditPost post = new RedditPost(upvotes, link, title);
 
-        return post;
+            bufferRedditPost.add(post);
+        }
     }
 }
