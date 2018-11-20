@@ -16,8 +16,6 @@ public class CommandLoader {
     public static void Load() {
         commands.add(new Help());
         commands.add(new Purge());
-        commands.add(new LMGTFY());
-        commands.add(new Search());
         commands.add(new Dankmeme());
         commands.add(new DankMemeEmotes());
         commands.add(new DONG());
