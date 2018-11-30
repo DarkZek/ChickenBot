@@ -4,19 +4,11 @@ import com.darkzek.ChickenBot.*;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
-import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.emote.EmoteAddedEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 
-import java.awt.*;
 import java.util.Arrays;
-import java.util.Set;
 
 /**
  * Created by darkzek on 28/02/18.
@@ -37,7 +29,12 @@ public class DankMemeEmotes extends Command {
     public void EmoteAdded(MessageReactionAddEvent event) {
 
         //Make sure the emote wasn't by chicken bot
-        if (event.getUser().getId().equalsIgnoreCase(event.getJDA().getSelfUser().getId())) {
+        if (event.getUser().isBot()) {
+            return;
+        }
+
+        //Check the user has permission to do that in this channel
+        if (!event.getMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_WRITE)) {
             return;
         }
 
