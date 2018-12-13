@@ -96,6 +96,11 @@ public class RemindMe extends Command {
 
             User usr = ChickenBot.jda.getUserById(reminder.userid);
 
+            if (usr == null) {
+                //User deleted account
+                return;
+            }
+
             PrivateChannel pm = usr.openPrivateChannel().complete();
 
             pm.sendMessage(new EmbedBuilder()
