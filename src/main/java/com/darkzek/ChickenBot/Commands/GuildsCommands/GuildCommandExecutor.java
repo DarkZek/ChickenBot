@@ -8,8 +8,6 @@ import com.darkzek.ChickenBot.Guilds.GuildCommand;
 import com.darkzek.ChickenBot.Guilds.GuildManager;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
 

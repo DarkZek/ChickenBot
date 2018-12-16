@@ -9,7 +9,6 @@ import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 
 import java.awt.*;
@@ -100,7 +99,7 @@ public class DistanceConversion extends Command {
         //Generate embed
         Reply(new EmbedBuilder()
                 .setColor(new Color(16138809))
-                .addField(response.origionalNumber + " " + response.origionalMeasurement + " is ", "`" + response.convertedNumber + " " + response.newMeasurement + "`", false)
+                .addField(response.originalNumber + " " + response.originalMeasurement + " is ", "`" + response.convertedNumber + " " + response.newMeasurement + "`", false)
                 .addField("or", "`" + String.valueOf(response.bananas) + " bananas`", false)
                 .setFooter("Admins: Use the command >DistanceConversion to disable this feature", null)
                 .build(), event);
@@ -190,8 +189,8 @@ public class DistanceConversion extends Command {
         convertedNumber.convertedNumber = converted;
         convertedNumber.bananas = bananas;
         convertedNumber.newMeasurement = activators[numberToConvertTo][0];
-        convertedNumber.origionalMeasurement = activators[measurementType][0];
-        convertedNumber.origionalNumber = number;
+        convertedNumber.originalMeasurement = activators[measurementType][0];
+        convertedNumber.originalNumber = number;
 
         return convertedNumber;
     }
@@ -209,7 +208,7 @@ public class DistanceConversion extends Command {
 class ConvertedNumber {
     public double bananas;
     public float convertedNumber;
-    public float origionalNumber;
-    public String origionalMeasurement;
+    public float originalNumber;
+    public String originalMeasurement;
     public String newMeasurement;
 }

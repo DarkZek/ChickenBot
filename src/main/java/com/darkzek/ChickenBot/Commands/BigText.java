@@ -6,7 +6,6 @@ import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 
 import javax.imageio.ImageIO;

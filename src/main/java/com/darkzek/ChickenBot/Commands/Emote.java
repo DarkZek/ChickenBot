@@ -5,7 +5,6 @@ import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.io.*;
 import java.util.Arrays;

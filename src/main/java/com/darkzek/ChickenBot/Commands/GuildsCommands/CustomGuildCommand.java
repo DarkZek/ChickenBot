@@ -1,7 +1,6 @@
 package com.darkzek.ChickenBot.Commands.GuildsCommands;
 
 import com.darkzek.ChickenBot.Commands.Command;
-import com.darkzek.ChickenBot.Configuration.GuildConfiguration;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
@@ -12,10 +11,8 @@ import com.darkzek.ChickenBot.Guilds.GuildSettings;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Arrays;
-import java.util.Set;
 
 public class CustomGuildCommand extends Command {
 
