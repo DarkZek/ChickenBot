@@ -113,8 +113,7 @@ public class Summarizer
     {
         if(text.equals("") || text.equals(" ") || text.equals("\n"))
         {
-            String msg = "Nothing to summarize...";
-            return msg;
+            return "Nothing to summarize...";
         }
         //start with raw freqs
         Map<String, Integer> wordFrequencies = getWordCounts(text);
@@ -153,7 +152,7 @@ public class Summarizer
 
         for(String sentence : sentences)//foreach string sentence in sentences list
         {
-            if(setSummarySentences.contains(sentence))
+            if(setSummarySentences.contains(sentence) && !sentence.toLowerCase().contains("javascript"))
             {
                 //produce each sentence with a bullet point and good amounts of spacing
                 summary = summary + "• " + sentence +  System.getProperty("line.separator") + System.getProperty("line.separator");
