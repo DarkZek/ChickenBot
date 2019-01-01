@@ -55,7 +55,7 @@ public class RemindMe extends Command {
             return;
         }
 
-        int units = stringToTimeunit(args[1]) * amountOfTime;
+        long units = stringToTimeunit(args[1]) * amountOfTime;
 
         if (units == -1) {
             Reply(Settings.messagePrefix + "Please use a correct time unit. I accept `days, hours, minutes and seconds`", event);
@@ -192,33 +192,29 @@ public class RemindMe extends Command {
         file.delete();
     }
 
-    //Converts units of time into miliseconds
-    public int stringToTimeunit(String input) {
+    //Converts units of time into milliseconds
+    public long stringToTimeunit(String input) {
         input = input.toLowerCase().trim();
 
         switch (input) {
+            case "month":
+            case "months": {
+                return 2629800000L;
+            }
             case "days":
-                return 86400000;
             case "day":
-                return 86400000;
             case "d":
                 return 86400000;
             case "hours":
-                return 3600000;
             case "hour":
-                return 3600000;
             case "h":
                 return 3600000;
             case "minute":
-                return 60000;
             case "minutes":
-                return 60000;
             case "m":
                 return 60000;
             case "seconds":
-                return 1000;
             case "second":
-                return 1000;
             case "s":
                 return 1000;
         }
