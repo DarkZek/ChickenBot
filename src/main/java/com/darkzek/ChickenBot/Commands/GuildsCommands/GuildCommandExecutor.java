@@ -8,6 +8,7 @@ import com.darkzek.ChickenBot.Guilds.GuildCommand;
 import com.darkzek.ChickenBot.Guilds.GuildManager;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
+import net.dv8tion.jda.api.entities.Message;
 
 import java.util.Arrays;
 
@@ -32,7 +33,7 @@ public class GuildCommandExecutor extends Command {
         String m = message;
 
         //Check if it uses  the command prefix or tags us (cant use the command type as we dont know what the command name will be)
-        if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
+        if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), Message.MentionType.USER)) {
             //Check if the message contains the correct phrase
             if (!message.startsWith(Settings.getInstance().enabler)) {
                 return;

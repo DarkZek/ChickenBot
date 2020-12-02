@@ -2,13 +2,14 @@ package com.darkzek.ChickenBot;
 
 import com.darkzek.ChickenBot.Commands.CommandLoader;
 import com.darkzek.ChickenBot.Configuration.GuildConfigurationManager;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
 import java.io.FileOutputStream;
@@ -18,7 +19,7 @@ import java.io.PrintStream;
 /**
  * Created by darkzek on 21/02/18.
  */
-public class ChickenBot extends ListenerAdapter{
+public class ChickenBot extends ListenerAdapter {
 
     //TODO: Move guild commands system to the new configuration api
     //TODO: Add better messaging system - like a language file
@@ -49,24 +50,19 @@ public class ChickenBot extends ListenerAdapter{
         //Load configs
         GuildConfigurationManager.getInstance();
 
-        //Setup account
-        JDABuilder builder = new JDABuilder(AccountType.BOT);
-        builder.setToken(Settings.getInstance().getToken());
-        builder.setAutoReconnect(true);
-        builder.setStatus(OnlineStatus.ONLINE);
-
-        //Setup the command manager so it can listen to events
-        builder.addEventListener(CommandManager.getInstance());
-
-        //Load all the commands
-        CommandLoader.Load();
-
         //Connect
         try {
-            jda = builder.buildBlocking();
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            //Setup account
+            jda = JDABuilder.createDefault(Settings.getInstance().getToken())
+                    .setAutoReconnect(true)
+                    .addEventListeners(CommandManager.getInstance())
+                    .build();
+
+            //Load all the commands
+            CommandLoader.Load();
+
+            jda.awaitReady();
+        } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -85,18 +81,21 @@ public class ChickenBot extends ListenerAdapter{
         PresenceMessage.getInstance(jda).NewPresence();
 
         System.out.println("Started Chicken Bot V" + Version.getVersion());
+
     }
 
     public static void TellMe(String message) {
         User darkzek = jda.getUserById("130173614702985216");
 
-        PrivateChannel pc = darkzek.openPrivateChannel().complete();
+        if (darkzek != null) {
+            PrivateChannel pc = darkzek.openPrivateChannel().complete();
+            if (message.length() > 2000) {
+                message = message.substring(0, 1993) + "```...";
+            }
 
-        if (message.length() > 2000) {
-            message = message.substring(0, 1993) + "```...";
+            pc.sendMessage(message).queue();
         }
 
-        pc.sendMessage(message).queue();
     }
 
     public static boolean runningFromIntelliJ()

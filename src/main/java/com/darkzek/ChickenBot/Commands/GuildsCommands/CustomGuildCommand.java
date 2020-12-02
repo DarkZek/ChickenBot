@@ -10,7 +10,7 @@ import com.darkzek.ChickenBot.Guilds.GuildManager;
 import com.darkzek.ChickenBot.Guilds.GuildSettings;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
-import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.api.Permission;
 
 import java.util.Arrays;
 

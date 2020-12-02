@@ -11,7 +11,7 @@ import com.darkzek.ChickenBot.Trigger;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import karimo94.Summarizer;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 
 import java.io.File;
 import java.io.IOException;

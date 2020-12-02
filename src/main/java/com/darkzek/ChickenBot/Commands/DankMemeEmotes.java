@@ -4,9 +4,10 @@ import com.darkzek.ChickenBot.*;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 
 import java.util.Arrays;
 
@@ -39,7 +40,7 @@ public class DankMemeEmotes extends Command {
         }
 
 
-        User messageAuthor = event.getChannel().getMessageById(event.getMessageId()).complete().getAuthor();
+        User messageAuthor = event.getChannel().retrieveMessageById(event.getMessageId()).complete().getAuthor();
 
         //Check if emote is to a chicken bot message
         if (!messageAuthor.getId().equalsIgnoreCase(event.getJDA().getSelfUser().getId())) {

@@ -1,12 +1,12 @@
 package com.darkzek.ChickenBot;
 
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
-import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.exceptions.ErrorResponseException;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class CommandManager extends ListenerAdapter {
             }
 
             //Exempt angry faces
-            if (event.getMessage().getContentRaw().startsWith(">") && !event.getMessage().getContentRaw().startsWith(">:") && commandRecievedEvent.processed == false && !event.getAuthor().isBot()) {
+            if (event.getMessage().getContentRaw().startsWith(">") && !event.getMessage().getContentRaw().startsWith(">:") && !commandRecievedEvent.processed && !event.getAuthor().isBot()) {
                 try {
                     unknownCommand(event);
                 } catch (ErrorResponseException e) {
@@ -87,7 +87,7 @@ public class CommandManager extends ListenerAdapter {
     public void unknownCommand(MessageReceivedEvent event) {
         try {
             event.getChannel().sendMessage(Settings.messagePrefix + "Unknown command!").queue();
-        } catch (InsufficientPermissionException e) {
+        } catch (InsufficientPermissionException ignored) {
 
         }
     }
@@ -98,8 +98,6 @@ public class CommandManager extends ListenerAdapter {
             for(Trigger trigger : shutdownTriggers) {
                 trigger.Shutdown();
             }
-        } catch (ErrorResponseException e) {
-          return;
         } catch (Exception e) {
             new ErrorReport().AddField("Name", "Shutdown Event").AddStacktrace(e).Report();
         }
@@ -111,7 +109,7 @@ public class CommandManager extends ListenerAdapter {
             for(Trigger trigger : emoteTriggers) {
                 try {
                     trigger.Emote(event);
-                } catch (ErrorResponseException e) {
+                } catch (ErrorResponseException ignored) {
 
                 }
             }

@@ -4,8 +4,9 @@ import com.darkzek.ChickenBot.Commands.Command;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
-import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class Trigger {
             String m = event.getMessage().getContentStripped();
 
             //Check if it uses  the command prefix or tags us
-            if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), net.dv8tion.jda.core.entities.Message.MentionType.USER)) {
+            if (!event.getMessage().isMentioned(event.getJDA().getSelfUser(), Message.MentionType.USER)) {
                 //Check if the message contains the correct phrase
                 if (!message.startsWith(Settings.getInstance().enabler)) {
                     return false;

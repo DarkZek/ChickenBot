@@ -144,7 +144,8 @@ public class GuildConfigurationManager {
 
     private HashMap<String, Object> GetContents(JSONObject object) {
         HashMap<String, Object> objects = new HashMap();
-        for (String obj : object.keySet()) {
+        for (Iterator it = object.keySet().iterator(); it.hasNext(); ) {
+            String obj = (String) it.next();
 
             Object value = object.get(obj);
 

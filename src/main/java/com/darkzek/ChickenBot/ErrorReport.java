@@ -1,7 +1,6 @@
 package com.darkzek.ChickenBot;
 
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.exceptions.PermissionException;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.io.File;
 import java.io.IOException;

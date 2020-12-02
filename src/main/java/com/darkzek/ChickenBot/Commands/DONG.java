@@ -1,11 +1,13 @@
 package com.darkzek.ChickenBot.Commands;
 
+import com.darkzek.ChickenBot.AntiDeathtrap;
 import com.darkzek.ChickenBot.Enums.CommandType;
 import com.darkzek.ChickenBot.Enums.MessageType;
 import com.darkzek.ChickenBot.Enums.TriggerType;
 import com.darkzek.ChickenBot.Events.CommandRecievedEvent;
 import com.darkzek.ChickenBot.Settings;
 import com.darkzek.ChickenBot.Trigger;
+import net.dv8tion.jda.api.entities.Guild;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +45,8 @@ public class DONG extends Command {
             this.dongs = dongsList.toArray(new String[dongsList.size()]);
 
             return;
-        } catch (IOException e) {
-        } catch (NoSuchElementException e) {
-        }
-        System.out.println("[ERROR] Cannot load DONG's file!");
+        } catch (IOException | NoSuchElementException ignored) {}
+        System.out.println("[ERROR] Cannot load DONG's file at !");
         System.exit(1);
     }
 
