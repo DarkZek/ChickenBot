@@ -1,4 +1,5 @@
 #![feature(once_cell)]
+#![feature(async_closure)]
 
 mod commands;
 
@@ -14,7 +15,6 @@ use serenity::{
         interactions::{
             application_command::{
                 ApplicationCommand,
-                ApplicationCommandOptionType,
             },
             Interaction,
             InteractionResponseType,
@@ -22,6 +22,7 @@ use serenity::{
     },
     prelude::*,
 };
+use serenity::builder::{CreateApplicationCommand, CreateApplicationCommands};
 
 struct ChickenBot {
     commands: Vec<Box<dyn Command>>
@@ -46,90 +47,46 @@ impl EventHandler for ChickenBot {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
 
-        let guild_id = GuildId(
-            env::var("GUILD_ID")
-                .expect("Expected GUILD_ID in environment")
-                .parse()
-                .expect("GUILD_ID must be an integer"),
-        );
+        if env::var("DEV").is_ok() {
+            let guild_id = GuildId(
+                env::var("GUILD_ID")
+                    .expect("Expected GUILD_ID in environment")
+                    .parse()
+                    .expect("GUILD_ID must be an integer"),
+            );
 
-        let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-            commands
-                .create_application_command(|command| {
-                    command.name("invite").description("A ping command")
-                })
-                .create_application_command(|command| {
-                    command.name("id").description("Get a user id").create_option(|option| {
-                        option
-                            .name("id")
-                            .description("The user to lookup")
-                            .kind(ApplicationCommandOptionType::User)
-                            .required(true)
-                    })
-                })
-                .create_application_command(|command| {
-                    command
-                        .name("welcome")
-                        .description("Welcome a user")
-                        .create_option(|option| {
-                            option
-                                .name("user")
-                                .description("The user to welcome")
-                                .kind(ApplicationCommandOptionType::User)
-                                .required(true)
-                        })
-                        .create_option(|option| {
-                            option
-                                .name("message")
-                                .description("The message to send")
-                                .kind(ApplicationCommandOptionType::String)
-                                .required(true)
-                                .add_string_choice(
-                                    "Welcome to our cool server! Ask me if you need help",
-                                    "pizza",
-                                )
-                                .add_string_choice("Hey, do you want a coffee?", "coffee")
-                                .add_string_choice(
-                                    "Welcome to the club, you're now a good person. Well, I hope.",
-                                    "club",
-                                )
-                                .add_string_choice(
-                                    "I hope that you brought a controller to play together!",
-                                    "game",
-                                )
-                        })
-                })
-                .create_application_command(|command| {
-                    command
-                        .name("numberinput")
-                        .description("Test command for number input")
-                        .create_option(|option| {
-                            option
-                                .name("int")
-                                .description("An integer from 5 to 10")
-                                .kind(ApplicationCommandOptionType::Integer)
-                                .required(true)
-                        })
-                        .create_option(|option| {
-                            option
-                                .name("number")
-                                .description("A float from -3.3 to 234.5")
-                                .kind(ApplicationCommandOptionType::Number)
-                                .required(true)
-                        })
-                })
-        })
-            .await;
+            // Loop through all commands and add them to the guild
+            let result = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
 
-        //println!("I now have the following guild slash commands: {:#?}", commands);
+                for cmd in &self.commands {
+                    commands.create_application_command(|command| {
+                        command.name(cmd.info().code).description(cmd.info().description)
+                    });
+                }
+                commands
+            }).await;
 
-        let guild_command =
-            ApplicationCommand::create_global_application_command(&ctx.http, |command| {
-                command.name("wonderful_command").description("An amazing command")
-            })
-                .await;
+            match result {
+                Ok(res) => println!("Successfully registered {} local commands for guild {}", res.len(), env::var("GUILD_ID").unwrap()),
+                Err(e) => println!("There was an error registering local commands. {}", e)
+            }
 
-        //println!("I created the following global slash command: {:#?}", guild_command);
+        } else {
+
+            // Loop through all commands and add them to the bot
+            for cmd in &self.commands {
+                let result = ApplicationCommand::create_global_application_command(&ctx.http, |command| {
+                    command.name(cmd.info().code).description(cmd.info().description)
+                }).await;
+
+                match result {
+                    Ok(_) => println!("Successfully registered global command {}", cmd.info().name),
+                    Err(e) => println!("There was an error registering global command {}. {}", cmd.info().name, e)
+                }
+            }
+
+            println!("Successfully registered {} global commands", self.commands.len())
+        }
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
