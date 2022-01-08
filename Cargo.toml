@@ -7,3 +7,4 @@ authors = ["Marshall Scott <mashdowne@hotmail.co.nz>"]
 [dependencies]
 serenity = { version = "0.10.9", default-features = false, features = ["client", "gateway", "rustls_backend", "model", "unstable_discord_api"] }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+async-trait = "0.1.52"

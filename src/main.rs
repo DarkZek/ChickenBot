@@ -1,6 +1,10 @@
+#![feature(once_cell)]
+
 mod commands;
 
 use std::env;
+use crate::commands::command::Command;
+use crate::commands::invite::InviteCommand;
 
 use serenity::{
     async_trait,
@@ -10,7 +14,6 @@ use serenity::{
         interactions::{
             application_command::{
                 ApplicationCommand,
-                ApplicationCommandInteractionDataOptionValue,
                 ApplicationCommandOptionType,
             },
             Interaction,
@@ -20,10 +23,26 @@ use serenity::{
     prelude::*,
 };
 
-struct Handler;
+struct ChickenBot {
+    commands: Vec<Box<dyn Command>>
+}
+
+impl ChickenBot {
+    pub fn new() -> ChickenBot {
+        ChickenBot {
+            commands: ChickenBot::load_commands()
+        }
+    }
+
+    pub fn load_commands() -> Vec<Box<dyn Command>> {
+        vec![
+            Box::new(InviteCommand::new()),
+        ]
+    }
+}
 
 #[async_trait]
-impl EventHandler for Handler {
+impl EventHandler for ChickenBot {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
 
@@ -37,7 +56,7 @@ impl EventHandler for Handler {
         let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
             commands
                 .create_application_command(|command| {
-                    command.name("ping").description("A ping command")
+                    command.name("invite").description("A ping command")
                 })
                 .create_application_command(|command| {
                     command.name("id").description("Get a user id").create_option(|option| {
@@ -102,7 +121,7 @@ impl EventHandler for Handler {
         })
             .await;
 
-        println!("I now have the following guild slash commands: {:#?}", commands);
+        //println!("I now have the following guild slash commands: {:#?}", commands);
 
         let guild_command =
             ApplicationCommand::create_global_application_command(&ctx.http, |command| {
@@ -110,7 +129,7 @@ impl EventHandler for Handler {
             })
                 .await;
 
-        println!("I created the following global slash command: {:#?}", guild_command);
+        //println!("I created the following global slash command: {:#?}", guild_command);
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
@@ -131,7 +150,7 @@ async fn main() {
 
     // Build our client.
     let mut client = Client::builder(token)
-        .event_handler(Handler)
+        .event_handler(ChickenBot::new())
         .application_id(application_id)
         .await
         .expect("Error creating client");
