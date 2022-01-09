@@ -1,3 +1,4 @@
+use std::error::Error;
 use serenity::client::Context;
 use serenity::model::prelude::application_command::ApplicationCommandInteraction;
 use async_trait::async_trait;
@@ -21,9 +22,9 @@ pub enum CommandType {
 pub trait Command : Sync + Send {
     fn info(&self) -> CommandInfo;
     fn parameters(&self, command: &mut CreateApplicationCommand) {}
-    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction);
+    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction) -> Result<(), Box<dyn Error>>;
     fn shutdown(&self) {}
-    fn new() -> Self where Self: Sized;
+    async fn new() -> Self where Self: Sized;
 }
 
 #[derive(Debug)]

@@ -8,6 +8,7 @@ use crate::ChickenBot;
 pub mod command;
 pub mod delete_commands;
 pub mod help;
+pub mod errors;
 
 pub mod invite;
 
@@ -41,13 +42,8 @@ impl ChickenBot {
 
                 for cmd in &self.commands {
                     commands.create_application_command(|command| {
-
-                        // Doesn't work
                         cmd.parameters(command.name(cmd.info().code).description(cmd.info().description));
                         command
-
-                        // Does work
-                        //command.name(cmd.info().code).description(cmd.info().description)
 
                     });
                 }

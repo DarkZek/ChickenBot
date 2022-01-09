@@ -23,23 +23,20 @@ impl Command for InviteCommand {
             .build()
     }
 
-    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction) {
+    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction) -> Result<(), Box<dyn std::error::Error>> {
 
         let invite_link = format!("https://discordapp.com/oauth2/authorize?client_id={}&scope=applications.commands%20bot&permissions=1341643969", env::var("APPLICATION_ID").unwrap());
 
-        if let Err(why) = command
-            .create_interaction_response(&ctx.http, |response| {
-                response
-                    .kind(InteractionResponseType::ChannelMessageWithSource)
-                    .interaction_response_data(|message| message.content(invite_link))
-            })
-            .await
-        {
-            println!("Cannot respond to slash command: {}", why);
-        }
+        command.create_interaction_response(&ctx.http, |response| {
+            response
+                .kind(InteractionResponseType::ChannelMessageWithSource)
+                .interaction_response_data(|message| message.content(invite_link))
+        }).await?;
+
+        Ok(())
     }
 
-    fn new() -> Self {
+    async fn new() -> Self {
         InviteCommand {}
     }
 }

@@ -1,7 +1,8 @@
 #![feature(once_cell)]
 #![feature(async_closure)]
 
-mod commands;
+pub mod commands;
+pub mod settings;
 
 use std::env;
 use crate::commands::command::Command;
@@ -25,26 +26,29 @@ use serenity::{
 };
 use serenity::builder::{CreateApplicationCommand, CreateApplicationCommands};
 use crate::commands::delete_commands::DeleteCommandsCommand;
+use crate::settings::Settings;
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 struct ChickenBot {
     commands: Vec<Box<dyn Command>>
 }
 
 impl ChickenBot {
-    pub fn new() -> ChickenBot {
+    pub async fn new() -> ChickenBot {
         ChickenBot {
-            commands: ChickenBot::load_commands()
+            commands: ChickenBot::load_commands().await
         }
     }
 
-    pub fn load_commands() -> Vec<Box<dyn Command>> {
+    pub async fn load_commands() -> Vec<Box<dyn Command>> {
         let mut commands: Vec<Box<dyn Command>> = vec![
-            Box::new(InviteCommand::new()),
-            Box::new(HelpCommand::new()),
+            Box::new(InviteCommand::new().await),
+            Box::new(HelpCommand::new().await),
         ];
 
         if env::var("DEV").is_ok() {
-            commands.push(Box::new(DeleteCommandsCommand::new()));
+            commands.push(Box::new(DeleteCommandsCommand::new().await));
         }
 
         commands
@@ -54,7 +58,7 @@ impl ChickenBot {
 #[async_trait]
 impl EventHandler for ChickenBot {
     async fn ready(&self, ctx: Context, ready: Ready) {
-        println!("{} is connected!", ready.user.name);
+        println!("{} v{} is connected!", ready.user.name, VERSION);
 
         self.register_commands(&ctx).await
     }
@@ -66,6 +70,9 @@ impl EventHandler for ChickenBot {
 
 #[tokio::main]
 async fn main() {
+
+    Settings::load();
+
     // Configure the client with your Discord bot token in the environment.
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
 
@@ -77,7 +84,7 @@ async fn main() {
 
     // Build our client.
     let mut client = Client::builder(token)
-        .event_handler(ChickenBot::new())
+        .event_handler(ChickenBot::new().await)
         .application_id(application_id)
         .await
         .expect("Error creating client");
