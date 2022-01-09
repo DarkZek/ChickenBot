@@ -6,6 +6,7 @@ mod commands;
 use std::env;
 use crate::commands::command::Command;
 use crate::commands::invite::InviteCommand;
+use crate::commands::help::HelpCommand;
 
 use serenity::{
     async_trait,
@@ -39,6 +40,7 @@ impl ChickenBot {
     pub fn load_commands() -> Vec<Box<dyn Command>> {
         let mut commands: Vec<Box<dyn Command>> = vec![
             Box::new(InviteCommand::new()),
+            Box::new(HelpCommand::new()),
         ];
 
         if env::var("DEV").is_ok() {

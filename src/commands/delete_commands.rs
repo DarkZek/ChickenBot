@@ -1,4 +1,3 @@
-use std::env;
 use serenity::client::Context;
 use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommand, ApplicationCommandInteraction};

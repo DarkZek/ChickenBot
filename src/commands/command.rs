@@ -1,6 +1,7 @@
 use serenity::client::Context;
 use serenity::model::prelude::application_command::ApplicationCommandInteraction;
 use async_trait::async_trait;
+use serenity::builder::CreateApplicationCommand;
 
 #[derive(Debug)]
 pub enum CommandCategory {
@@ -19,6 +20,7 @@ pub enum CommandType {
 #[async_trait]
 pub trait Command : Sync + Send {
     fn info(&self) -> CommandInfo;
+    fn parameters(&self, command: &mut CreateApplicationCommand) {}
     async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction);
     fn shutdown(&self) {}
     fn new() -> Self where Self: Sized;

@@ -7,6 +7,7 @@ use crate::ChickenBot;
 
 pub mod command;
 pub mod delete_commands;
+pub mod help;
 
 pub mod invite;
 
@@ -40,7 +41,14 @@ impl ChickenBot {
 
                 for cmd in &self.commands {
                     commands.create_application_command(|command| {
-                        command.name(cmd.info().code).description(cmd.info().description)
+
+                        // Doesn't work
+                        cmd.parameters(command.name(cmd.info().code).description(cmd.info().description));
+                        command
+
+                        // Does work
+                        //command.name(cmd.info().code).description(cmd.info().description)
+
                     });
                 }
                 commands
@@ -56,7 +64,8 @@ impl ChickenBot {
             // Loop through all commands and add them to the bot
             for cmd in &self.commands {
                 let result = ApplicationCommand::create_global_application_command(&ctx.http, |command| {
-                    command.name(cmd.info().code).description(cmd.info().description)
+                    cmd.parameters(command.name(cmd.info().code).description(cmd.info().description));
+                    command
                 }).await;
 
                 match result {
