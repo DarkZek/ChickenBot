@@ -10,7 +10,8 @@ pub struct Settings {
     pub message_prefix: String,
     pub changelog_url: String,
     pub repo_url: String,
-    pub user_agent: String
+    pub user_agent: String,
+    pub user_manager: u64
 }
 
 impl Settings {
@@ -26,7 +27,8 @@ impl Settings {
                             message_prefix: "Brawk! ".to_string(),
                             changelog_url: "https://api.github.com/repos/DarkZek/ChickenBot/commits".to_string(),
                             repo_url: "https://github.com/DarkZek/ChickenBot".to_string(),
-                            user_agent: "Chicken-Bot".to_string()
+                            user_agent: "Chicken-Bot".to_string(),
+                            user_manager: 130173614702985216
                         })
                     }
                 }
@@ -38,7 +40,8 @@ impl Settings {
                     message_prefix: "Brawk! ".to_string(),
                     changelog_url: "https://api.github.com/repos/DarkZek/ChickenBot/commits".to_string(),
                     repo_url: "https://github.com/DarkZek/ChickenBot".to_string(),
-                    user_agent: "Chicken-Bot".to_string()
+                    user_agent: "Chicken-Bot".to_string(),
+                    user_manager: 130173614702985216
                 })
             }
         };

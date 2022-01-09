@@ -1,9 +1,9 @@
-use std::error::Error;
 use serenity::client::Context;
 use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommand, ApplicationCommandInteraction};
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
+use crate::error::Error;
 
 /**
  * Created by Marshall Scott on 8/01/22.
@@ -23,7 +23,7 @@ impl Command for DeleteCommandsCommand {
             .build()
     }
 
-    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction) -> Result<(), Box<Error>> {
+    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
         let commands = match ApplicationCommand::get_global_application_commands(&ctx.http).await {
             Ok(res) => res,
@@ -36,17 +36,15 @@ impl Command for DeleteCommandsCommand {
 
         println!("Successfully deleted all global commands for bot");
 
-        if let Err(why) = command.create_interaction_response(&ctx.http, |t| {
+        command.create_interaction_response(&ctx.http, |t| {
             t.kind(InteractionResponseType::ChannelMessageWithSource)
                 .interaction_response_data(|message| message.content("Successfully deleted all global commands for bot"))
-        }).await {
-            println!("")
-        }
+        }).await?;
 
         Ok(())
     }
 
-    async fn new() -> Self {
-        DeleteCommandsCommand {}
+    async fn new() -> Result<Self, Error> {
+        Ok(DeleteCommandsCommand {})
     }
 }

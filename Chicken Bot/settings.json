@@ -2,5 +2,7 @@
   "prefix": ">",
   "message_prefix": "Brawk! ",
   "changelog_url": "https://api.github.com/repos/DarkZek/ChickenBot/commits",
-  "repo_url": "https://github.com/DarkZek/ChickenBot"
+  "repo_url": "https://github.com/DarkZek/ChickenBot",
+  "user_agent": "Chicken-Bot",
+  "user_manager": 130173614702985216
 }

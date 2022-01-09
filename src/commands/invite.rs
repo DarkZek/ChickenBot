@@ -4,6 +4,7 @@ use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::ApplicationCommandInteraction;
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
+use crate::error::Error;
 
 /**
  * Created by Marshall Scott on 8/01/22.
@@ -23,7 +24,7 @@ impl Command for InviteCommand {
             .build()
     }
 
-    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction) -> Result<(), Box<dyn std::error::Error>> {
+    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
         let invite_link = format!("https://discordapp.com/oauth2/authorize?client_id={}&scope=applications.commands%20bot&permissions=1341643969", env::var("APPLICATION_ID").unwrap());
 
@@ -36,7 +37,7 @@ impl Command for InviteCommand {
         Ok(())
     }
 
-    async fn new() -> Self {
-        InviteCommand {}
+    async fn new() -> Result<Self, Error> {
+        Ok(InviteCommand {})
     }
 }

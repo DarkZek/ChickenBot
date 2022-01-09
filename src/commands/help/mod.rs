@@ -1,21 +1,21 @@
-use std::future::Future;
 use serenity::client::Context;
 use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue, ApplicationCommandOptionType};
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
-use reqwest::Error;
-use serde_json::Value;
 use serenity::builder::CreateApplicationCommand;
-use crate::commands::errors::InvalidParameterType;
+use crate::commands::help::update::Update;
+use crate::error::Error;
 use crate::settings::SETTINGS;
+
+pub mod update;
 
 /**
  * Created by Marshall Scott on 8/01/22.
  */
 
 pub struct HelpCommand {
-    cached_commit_msg: Option<String>
+    cached_commit_msg: Option<Update>
 }
 
 #[async_trait]
@@ -40,7 +40,7 @@ impl Command for HelpCommand {
         });
     }
 
-    async fn triggered(&self, ctx: Context, command: &ApplicationCommandInteraction) -> Result<(), Box<dyn std::error::Error>> {
+    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
         let data = match command.data.options.get(0) {
             None => "Test".to_string(),
@@ -49,7 +49,7 @@ impl Command for HelpCommand {
                     ApplicationCommandInteractionDataOptionValue::String(val) => val,
                     _ => {
                         println!("Discord API returning non string type for string parameter");
-                        return Err(Box::new(InvalidParameterType {}))
+                        return Err(Error::InvalidParameterType)?
                     }
                 };
 
@@ -59,7 +59,7 @@ impl Command for HelpCommand {
                     }
                     "changes" => {
                         match &self.cached_commit_msg {
-                            Some(val) => val.clone(),
+                            Some(val) => val.to_string(),
                             None => {
                                 "Commit log not accessible currently. Please try again later".to_string()
                             }
@@ -82,43 +82,37 @@ impl Command for HelpCommand {
         Ok(())
     }
 
-    async fn new() -> Self {
+    async fn new() -> Result<Self, Error> {
 
-        HelpCommand {
-            cached_commit_msg: HelpCommand::get_changes().await
-        }
+        let cached_commit_msg = match HelpCommand::get_changes().await {
+            Ok(val) => Some(val),
+            Err(_) => {
+                println!();
+                None
+            }
+        };
+
+        Ok(HelpCommand {
+            cached_commit_msg
+        })
     }
 }
 
 impl HelpCommand {
 
-    async fn get_changes() -> Option<String> {
+    async fn get_changes() -> Result<Update, Error> {
 
-        let mut val = reqwest::Client::builder()
-            .user_agent(SETTINGS.get()?.user_agent.as_str())
-            .build()
-            .ok()?
+        let val = reqwest::Client::builder()
+            .user_agent(&SETTINGS.get().unwrap().user_agent)
+            .build()?
             .get(&SETTINGS.get().as_ref().unwrap().changelog_url)
             .send()
-            .await
-            .ok()?;
+            .await?;
 
         if val.status() != 200 {
-            println!("Fetching git commits returned a '{}'. Error: '{}'", val.status(), val.text().await.ok()?);
-            return None;
+            return Err(Error::ErrorHttpCode(val.status(), val.text().await.ok()));
         }
 
-        Some(val.json::<Vec<Value>>()
-            .await
-            .ok()?
-            .get(0)
-            .expect("Git commit url format unexpected")
-            .get("commit")
-            .expect("Git commit url format unexpected")
-            .get("message")
-            .expect("Git commit url format unexpected")
-            .as_str()
-            .unwrap()
-            .to_string())
+        Update::new(val).await
     }
 }

@@ -1,14 +1,16 @@
 use std::env;
+
 use serenity::client::Context;
 use serenity::model::id::GuildId;
-use serenity::model::interactions::{Interaction};
+use serenity::model::interactions::{Interaction, InteractionResponseType};
 use serenity::model::interactions::application_command::ApplicationCommand;
+
 use crate::ChickenBot;
+use crate::settings::SETTINGS;
 
 pub mod command;
 pub mod delete_commands;
 pub mod help;
-pub mod errors;
 
 pub mod invite;
 
@@ -19,7 +21,27 @@ impl ChickenBot {
         if let Interaction::ApplicationCommand(command) = &interaction {
             for possible_command in &self.commands {
                 if possible_command.info().code == command.data.name {
-                    possible_command.triggered(ctx, command).await;
+                    match possible_command.triggered(&ctx, command).await {
+                        Ok(_) => {}
+                        Err(e) => {
+                            println!("Command '{}' threw an error: {}", possible_command.info().name, e);
+
+                            command.create_interaction_response(&ctx.http, |t| {
+                                t.kind(InteractionResponseType::ChannelMessageWithSource)
+                                    .interaction_response_data(|message| message.content("There was an error processing your request, it has been sent to the bot maintenance team."))
+                            }).await;
+
+                            if let Ok(user) = ctx.http.get_user(130173614702985216).await {
+                                user.direct_message(&ctx.http, |message| {
+                                    message.content(format!("Command '{}' threw an error: {}", possible_command.info().name, e))
+                                });
+
+                                println!("Error: Could not look up user '{}' to send error message to", SETTINGS.get().as_ref().unwrap().user_manager)
+                            } else {
+                            }
+                        }
+                    }
+
                     return
                 }
             }
