@@ -2,6 +2,9 @@
 #![feature(async_closure)]
 
 use std::env;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use serenity::{
     async_trait,
@@ -13,27 +16,37 @@ use serenity::{
     },
     prelude::*,
 };
+use serenity::model::gateway::Activity;
+use serenity::model::id::GuildId;
+use serenity::model::prelude::OnlineStatus;
+use tokio::time::Duration;
 
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
 use crate::commands::help::HelpCommand;
 use crate::commands::invite::InviteCommand;
+use crate::presence::PresenceMessage;
 use crate::settings::Settings;
 
 pub mod commands;
 pub mod settings;
 pub mod error;
+mod presence;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 struct ChickenBot {
-    commands: Vec<Box<dyn Command>>
+    commands: Vec<Box<dyn Command>>,
+    presence_loop_running: AtomicBool,
+    guild_count: Arc<Mutex<usize>>
 }
 
 impl ChickenBot {
     pub async fn new() -> ChickenBot {
         ChickenBot {
-            commands: ChickenBot::load_commands().await
+            commands: ChickenBot::load_commands().await,
+            presence_loop_running: AtomicBool::new(false),
+            guild_count: Arc::new(Mutex::new(0))
         }
     }
 
@@ -61,6 +74,39 @@ impl EventHandler for ChickenBot {
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         self.interaction_created(ctx, interaction).await
+    }
+
+    async fn cache_ready(&self, ctx: Context, guilds: Vec<GuildId>) {
+        println!("Cache built successfully!");
+
+        *self.guild_count.lock().unwrap() = guilds.len();
+
+        let ctx = Arc::new(ctx);
+
+        if !self.presence_loop_running.load(Ordering::Relaxed) {
+
+            let ctx1 = Arc::clone(&ctx);
+            let guilds_mutex = Arc::clone(&self.guild_count);
+
+            tokio::spawn(async move {
+
+                let presence = PresenceMessage::new().await;
+
+                loop {
+                    let mut guilds = 0;
+                    if let Ok(val) = guilds_mutex.lock() {
+                        guilds = *val;
+                    }
+                    let presence_message = presence.get_presence(guilds);
+                    println!("Set presence to {}", presence_message);
+                    ctx1.set_presence(Some(Activity::playing(presence_message)), OnlineStatus::Idle).await;
+                    tokio::time::sleep(Duration::from_secs(12)).await;
+                }
+            });
+
+            // Now that the loop is running, we set the bool to true
+            self.presence_loop_running.swap(true, Ordering::Relaxed);
+        }
     }
 }
 
