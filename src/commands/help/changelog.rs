@@ -5,20 +5,20 @@ use serde_json::Value;
 use serenity::builder::Timestamp;
 use crate::error::Error;
 
-pub struct Update {
+pub struct Changelog {
     time: DateTime<FixedOffset>,
     message: String,
     author: String
 }
 
-impl std::fmt::Display for Update {
+impl std::fmt::Display for Changelog {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "<{}> at <t:{}:f> | `{}`", self.author, self.time.timestamp(), self.message)
     }
 }
 
-impl Update {
-    pub async fn new(data: Response) -> Result<Update, Error> {
+impl Changelog {
+    pub async fn new(data: Response) -> Result<Changelog, Error> {
         let json = data.json::<Vec<Value>>()
             .await?;
 
@@ -38,7 +38,7 @@ impl Update {
         let author = author_object.get("login").ok_or(Error::Other(String::from("No login information about author in git log")))?.as_str()
             .ok_or(Error::Other(String::from("No string login information about author in git log")))?.to_string();
 
-        Ok(Update {
+        Ok(Changelog {
             time,
             message,
             author

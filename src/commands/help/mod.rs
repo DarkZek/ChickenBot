@@ -4,18 +4,19 @@ use serenity::model::interactions::application_command::{ApplicationCommandInter
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
 use serenity::builder::CreateApplicationCommand;
-use crate::commands::help::update::Update;
+use serenity::model::prelude::InteractionApplicationCommandCallbackDataFlags;
+use crate::commands::help::changelog::Changelog;
 use crate::error::Error;
 use crate::settings::SETTINGS;
 
-pub mod update;
+pub mod changelog;
 
 /**
  * Created by Marshall Scott on 8/01/22.
  */
 
 pub struct HelpCommand {
-    cached_commit_msg: Option<Update>
+    cached_commit_msg: Option<Changelog>
 }
 
 #[async_trait]
@@ -76,7 +77,7 @@ impl Command for HelpCommand {
         command.create_interaction_response(&ctx.http, |response| {
             response
                 .kind(InteractionResponseType::ChannelMessageWithSource)
-                .interaction_response_data(|message| message.content(data))
+                .interaction_response_data(|message| message.content(data).flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
         }).await?;
 
         Ok(())
@@ -100,7 +101,7 @@ impl Command for HelpCommand {
 
 impl HelpCommand {
 
-    async fn get_changes() -> Result<Update, Error> {
+    async fn get_changes() -> Result<Changelog, Error> {
 
         let val = reqwest::Client::builder()
             .user_agent(&SETTINGS.get().unwrap().user_agent)
@@ -113,6 +114,6 @@ impl HelpCommand {
             return Err(Error::ErrorHttpCode(val.status(), val.text().await.ok()));
         }
 
-        Update::new(val).await
+        Changelog::new(val).await
     }
 }
