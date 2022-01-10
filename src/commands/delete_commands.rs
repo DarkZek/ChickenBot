@@ -31,7 +31,9 @@ impl Command for DeleteCommandsCommand {
         };
 
         for command in commands {
-            ApplicationCommand::delete_global_application_command(&ctx.http, command.id).await;
+            if let Err(e) = ApplicationCommand::delete_global_application_command(&ctx.http, command.id).await {
+                println!("Failed to delete global application command {}. {}", command.name, e)
+            }
         }
 
         println!("Successfully deleted all global commands for bot");

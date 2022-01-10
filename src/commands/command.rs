@@ -19,6 +19,8 @@ pub enum CommandType {
 }
 
 #[async_trait]
+#[allow(dead_code)]
+#[allow(unused_variables)]
 pub trait Command : Sync + Send {
     fn info(&self) -> CommandInfo;
     fn parameters(&self, command: &mut CreateApplicationCommand) {}

@@ -2,7 +2,6 @@ use std::fmt::Formatter;
 use chrono::{DateTime, FixedOffset};
 use reqwest::Response;
 use serde_json::Value;
-use serenity::builder::Timestamp;
 use crate::error::Error;
 
 pub struct Changelog {

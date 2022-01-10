@@ -29,15 +29,18 @@ impl ChickenBot {
                             command.create_interaction_response(&ctx.http, |t| {
                                 t.kind(InteractionResponseType::ChannelMessageWithSource)
                                     .interaction_response_data(|message| message.content("There was an error processing your request, it has been sent to the bot maintenance team."))
-                            }).await;
+                            }).await.is_err().then(|| println!("Failed to notify user of error"));
 
                             if let Ok(user) = ctx.http.get_user(130173614702985216).await {
-                                user.direct_message(&ctx.http, |message| {
+                                if let Err(e) = user.direct_message(&ctx.http, |message| {
+                                    println!("Command '{}' threw an error: {}", possible_command.info().name, e);
                                     message.content(format!("Command '{}' threw an error: {}", possible_command.info().name, e))
-                                });
 
-                                println!("Error: Could not look up user '{}' to send error message to", SETTINGS.get().as_ref().unwrap().user_manager)
+                                }).await {
+                                    println!("Error: Could not message user '{}' to send error message to. Error: {}", SETTINGS.get().as_ref().unwrap().user_manager, e)
+                                }
                             } else {
+                                println!("Error: Could not look up user '{}' to send error message to. Error: {}", SETTINGS.get().as_ref().unwrap().user_manager, e)
                             }
                         }
                     }

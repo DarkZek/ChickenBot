@@ -19,7 +19,7 @@ impl Settings {
         match fs::File::open("settings.json") {
             Ok(file) => {
                 match serde_json::from_reader(file) {
-                    Ok(val) => SETTINGS.set(val),
+                    Ok(val) => SETTINGS.set(val).expect("SETTINGS variable already set"),
                     Err(e) => {
                         println!("Error parsing settings.json {}. Using default settings", e);
                         SETTINGS.set(Settings {
@@ -29,7 +29,7 @@ impl Settings {
                             repo_url: "https://github.com/DarkZek/ChickenBot".to_string(),
                             user_agent: "Chicken-Bot".to_string(),
                             user_manager: 130173614702985216
-                        })
+                        }).expect("SETTINGS variable already set");
                     }
                 }
             }
@@ -42,7 +42,7 @@ impl Settings {
                     repo_url: "https://github.com/DarkZek/ChickenBot".to_string(),
                     user_agent: "Chicken-Bot".to_string(),
                     user_manager: 130173614702985216
-                })
+                }).expect("SETTINGS variable already set");
             }
         };
     }
