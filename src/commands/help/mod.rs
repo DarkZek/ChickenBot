@@ -1,3 +1,4 @@
+use std::env;
 use serenity::client::Context;
 use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue, ApplicationCommandOptionType};
@@ -57,6 +58,9 @@ impl Command for HelpCommand {
                 match value.as_str() {
                     "source" => {
                         SETTINGS.get().unwrap().repo_url.clone()
+                    }
+                    "invite" => {
+                        format!("https://discordapp.com/oauth2/authorize?client_id={}&scope=applications.commands%20bot&permissions=1341643969", env::var("APPLICATION_ID").unwrap())
                     }
                     "changes" => {
                         match &self.cached_commit_msg {

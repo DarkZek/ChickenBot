@@ -24,7 +24,7 @@ use tokio::time::Duration;
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
 use crate::commands::help::HelpCommand;
-use crate::commands::invite::InviteCommand;
+use crate::commands::meme::MemesCommand;
 use crate::presence::PresenceMessage;
 use crate::settings::Settings;
 
@@ -52,8 +52,8 @@ impl ChickenBot {
 
     pub async fn load_commands() -> Vec<Box<dyn Command>> {
         let mut commands: Vec<Box<dyn Command>> = vec![
-            Box::new(InviteCommand::new().await.unwrap()),
             Box::new(HelpCommand::new().await.unwrap()),
+            Box::new(MemesCommand::new().await.unwrap()),
         ];
 
         if env::var("DEV").is_ok() {
@@ -97,10 +97,13 @@ impl EventHandler for ChickenBot {
                     if let Ok(val) = guilds_mutex.lock() {
                         guilds = *val;
                     }
+
                     let presence_message = presence.get_presence(guilds);
                     println!("Set presence to {}", presence_message);
-                    ctx1.set_presence(Some(Activity::playing(presence_message)), OnlineStatus::Idle).await;
-                    tokio::time::sleep(Duration::from_secs(12)).await;
+
+                    ctx1.set_presence(Some(Activity::playing(presence_message)), OnlineStatus::Online).await;
+
+                    tokio::time::sleep(Duration::from_secs(2 * 60)).await;
                 }
             });
 

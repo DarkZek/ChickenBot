@@ -11,8 +11,7 @@ use crate::settings::SETTINGS;
 pub mod command;
 pub mod delete_commands;
 pub mod help;
-
-pub mod invite;
+pub mod meme;
 
 impl ChickenBot {
 
@@ -63,7 +62,7 @@ impl ChickenBot {
             );
 
             // Loop through all commands and add them to the guild
-            let result = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
+            let result = guild_id.set_application_commands(&ctx.http, |commands| {
 
                 for cmd in &self.commands {
                     commands.create_application_command(|command| {
