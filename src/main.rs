@@ -23,6 +23,7 @@ use tokio::time::Duration;
 
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
+use crate::commands::dong::DongCommand;
 use crate::commands::help::HelpCommand;
 use crate::commands::meme::MemesCommand;
 use crate::presence::PresenceMessage;
@@ -54,6 +55,7 @@ impl ChickenBot {
         let mut commands: Vec<Box<dyn Command>> = vec![
             Box::new(HelpCommand::new().await.unwrap()),
             Box::new(MemesCommand::new().await.unwrap()),
+            Box::new(DongCommand::new().await.unwrap()),
         ];
 
         if env::var("DEV").is_ok() {

@@ -10,6 +10,7 @@ pub enum Error {
     Reqwest(reqwest::Error),
     Serenity(SerenityError),
     CronoParseError(ParseError),
+    Serde(serde_json::Error),
     Other(String)
 }
 
@@ -31,6 +32,12 @@ impl From<ParseError> for Error {
     }
 }
 
+impl From<serde_json::Error> for Error {
+    fn from(err: serde_json::Error) -> Self {
+        Error::Serde(err)
+    }
+}
+
 impl std::error::Error for Error {}
 
 impl fmt::Display for Error {
@@ -41,6 +48,7 @@ impl fmt::Display for Error {
             Error::ErrorHttpCode(status, text) => write!(f, "A HTTP request returned a '{}'. Error: '{:?}'", status, text),
             Error::CronoParseError(e) => e.fmt(f),
             Error::Serenity(e) => e.fmt(f),
+            Error::Serde(e) => e.fmt(f),
             Error::Other(str) => str.fmt(f),
         }
     }

@@ -12,6 +12,7 @@ pub mod command;
 pub mod delete_commands;
 pub mod help;
 pub mod meme;
+pub mod dong;
 
 impl ChickenBot {
 

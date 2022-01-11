@@ -33,7 +33,7 @@ public class DONG extends Command {
     }
 
     public void LoadDongs() {
-        File dongs = new File("DONG.txt");
+        File dongs = new File("DONG.json");
         ArrayList<String> dongsList = new ArrayList<>();
         try {
             Scanner scanner = new Scanner(dongs);
