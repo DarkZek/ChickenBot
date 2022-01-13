@@ -24,25 +24,29 @@ fn regex_split<'a> (regex: &'static Regex, text: &'a str) -> RegexResult<Vec<&'a
 fn regex_split_iter<'a> (regex: &'static Regex, text: &'a str) -> impl Iterator<Item = RegexResult<&'a str>> {
     let mut last = 0;
     let iter = regex.find_iter(text)
+        .map(move |x| {
+            x.map(|x| (x.start(), x.end()))
+        })
+        .chain([Ok((text.len(), text.len()))])
         .filter_map(move |x| {
-            let val = match x {
+            let (start, end) = match x {
                 Ok(v) => { v }
                 Err(e) => { return Some(Err(e)) }
             };
-            let range = last..val.start();
-            last = val.end();
+            let range = last..start;
+            last = end;
 
-            // omit empty strings that were somehow making it through (probably regex being silly)
+            // omit empty strings
             if range.is_empty() {
                 return None;
             }
-            let ret = &text[range];
-            Some(Ok(ret))
+            let val = &text[range];
+            Some(Ok(val))
         });
     iter
 }
 
-// find words and their occurences
+// find words and their occurrences
 fn get_word_count(text: &str) -> RegexResult<HashMap<&str, usize>> {
     let regex = static_regex!("\\s+|[',.\\(\\)*]")?;
 
@@ -186,17 +190,10 @@ fn search<'a> (sentences: &Vec<&'a str>, word: &str) -> Option<usize> {
 /// • Wow I am so impressed"#);
 /// ```
 pub fn summarize(text: &str, max: usize) -> Result<String, SummarizeError> {
-    let trimmed = text.trim();
-    if trimmed.is_empty() || trimmed.eq(" ") || trimmed.eq("\n") {
+    let text = text.trim();
+    if text.is_empty() || text.eq(" ") || text.eq("\n") {
         return Err(SummarizeError::NothingToSummarize)
     }
-
-    // add a whitespace character to the end of the string
-    // if this is not done the split function misses the last word
-    // still less string allocations than the java version (like by a lot)
-    let mut text = text.to_string();
-    text.push(' ');
-    let text = &text;
 
     let mut freqs = get_word_count(text)?;
     filter_stop_words(&mut freqs);
@@ -303,7 +300,7 @@ mod tests {
 
     #[test]
     fn check_regex_split() {
-        let input = "test    test, yes a, b,  c  a \n things are   kinda ";
+        let input = "test    test, yes a, b,  c  a \n things are   kinda";
         let regex = static_regex!("\\s+|[',.\\(\\)*]").unwrap();
 
         let expected_output = [
