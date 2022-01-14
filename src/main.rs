@@ -30,6 +30,7 @@ use crate::presence::PresenceMessage;
 use crate::settings::Settings;
 
 pub mod commands;
+pub mod modules;
 pub mod settings;
 pub mod error;
 mod presence;
