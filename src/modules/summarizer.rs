@@ -182,12 +182,6 @@ fn search<'a> (sentences: &Vec<&'a str>, word: &str) -> Option<usize> {
 /// This function is the best! Does it matter how long my sentences are?"#;
 ///
 /// let output = summarize(input, 3).unwrap();
-///         assert_eq!(output,
-/// r#"• This is a test
-///
-/// • How cool is this function
-///
-/// • Does it matter how long my sentences are"#);
 /// ```
 pub fn summarize(text: &str, max: usize) -> Result<String, SummarizeError> {
     let text = text.trim();
@@ -325,20 +319,5 @@ mod tests {
             });
 
         assert_eq!(count, expected_output.len());
-    }
-
-    #[test]
-    fn test_example() {
-        let input = r#"This is a test. How cool is this function. Wow I am so impressed.
-        This function is the best! Does it matter how long my sentences are?"#;
-
-        let output = summarize(input, 3).unwrap();
-        assert_eq!(output,
-r#"• This is a test
-
-• How cool is this function
-
-• Does it matter how long my sentences are"#
-        );
     }
 }
