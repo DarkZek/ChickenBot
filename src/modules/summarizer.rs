@@ -126,7 +126,7 @@ fn sort(words: HashMap<&str, usize>) -> Vec<&str> {
 
 // split input string into sentences
 fn split_sentences(text: &str) -> RegexResult<Vec<&str>> {
-    let regex = static_regex!("(?<!\\d)\\.(?!\\d)|(?<=\\d)\\.(?!\\d)|(?<!\\d)\\.(?=\\d)")?;
+    let regex = static_regex!("(?<!\\d)\\.(?!\\d)|(?<=\\d)\\.(?!\\d)|(?<!\\d)\\.(?=\\d)|(?<!\\d)\\!(?!\\d)|(?<=\\d)\\!(?!\\d)|(?<!\\d)\\!(?=\\d)|(?<!\\d)\\?(?!\\d)|(?<=\\d)\\?(?!\\d)|(?<!\\d)\\?(?=\\d)")?;
 
     regex_split(regex, text)
 }
@@ -187,7 +187,7 @@ fn search<'a> (sentences: &Vec<&'a str>, word: &str) -> Option<usize> {
 ///
 /// • How cool is this function
 ///
-/// • Wow I am so impressed"#);
+/// • Does it matter how long my sentences are"#);
 /// ```
 pub fn summarize(text: &str, max: usize) -> Result<String, SummarizeError> {
     let text = text.trim();
@@ -338,7 +338,7 @@ r#"• This is a test
 
 • How cool is this function
 
-• Wow I am so impressed"#
+• Does it matter how long my sentences are"#
         );
     }
 }
