@@ -15,7 +15,7 @@ Searching for the perfect images for $1 servers
 Sifting through commands from $1 servers
 Converting miles to bananas in $1 servers
 https://github.com/darkzek/ChickenBot/
-Contribute your messages for the playing message using >source
+Contribute your messages for the playing message using /info source
 Brawk brawk, Brawk!
 Pecking at some worms
 Caring for my $1 servers

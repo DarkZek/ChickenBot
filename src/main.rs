@@ -1,5 +1,6 @@
 #![feature(once_cell)]
 #![feature(async_closure)]
+#![feature(backtrace)]
 
 use std::env;
 use std::sync::Arc;
@@ -26,6 +27,7 @@ use crate::commands::delete_commands::DeleteCommandsCommand;
 use crate::commands::dong::DongCommand;
 use crate::commands::help::HelpCommand;
 use crate::commands::meme::MemesCommand;
+use crate::commands::summarize::SummarizeCommand;
 use crate::presence::PresenceMessage;
 use crate::settings::Settings;
 
@@ -57,6 +59,7 @@ impl ChickenBot {
             Box::new(HelpCommand::new().await.unwrap()),
             Box::new(MemesCommand::new().await.unwrap()),
             Box::new(DongCommand::new().await.unwrap()),
+            Box::new(SummarizeCommand::new().await.unwrap()),
         ];
 
         if env::var("DEV").is_ok() {

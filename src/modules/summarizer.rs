@@ -1,15 +1,17 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
-use std::lazy::{SyncOnceCell};
 use std::ops::ControlFlow::{Break, Continue};
 use fancy_regex::{Error, Regex};
 
 // used very often
 type RegexResult<T> = fancy_regex::Result<T>;
 
+#[macro_export]
 macro_rules! static_regex {
     ($lit:literal) => {
         {
+            use fancy_regex::Regex;
+            use std::lazy::SyncOnceCell;
             static REGEX: SyncOnceCell<Regex> = SyncOnceCell::new();
             REGEX.get_or_try_init(|| Regex::new($lit))
         }
@@ -134,15 +136,7 @@ fn split_sentences(text: &str) -> RegexResult<Vec<&str>> {
 // i wish there was a better way to do this
 // but it could be worse
 fn prep_sentences(text: &str) -> RegexResult<String> {
-    let text = text.replace("Mr.", "Mr").replace("Ms.", "Ms").replace("Dr.", "Dr").replace("Jan.", "Jan").replace("Feb.", "Feb")
-        .replace("Mar.", "Mar").replace("Apr.", "Apr").replace("Jun.", "Jun").replace("Jul.", "Jul").replace("Aug.", "Aug")
-        .replace("Sep.", "Sep").replace("Spet.", "Sept").replace("Oct.", "Oct").replace("Nov.", "Nov").replace("Dec.", "Dec")
-        .replace("St.", "St").replace("Prof.", "Prof").replace("Mrs.", "Mrs").replace("Gen.", "Gen")
-        .replace("Corp.", "Corp").replace("Mrs.", "Mrs").replace("Sr.", "Sr").replace("Jr.", "Jr").replace("cm.", "cm")
-        .replace("Ltd.", "Ltd").replace("Col.", "Col").replace("vs.", "vs").replace("Capt.", "Capt")
-        .replace("Univ.", "University").replace("Sgt.", "Sgt").replace("ft.", "ft").replace("in.", "in")
-        .replace("Ave.", "Ave").replace("Univ.", "University").replace("Lt.", "Lt").replace("etc.", "etc").replace("mm.", "mm")
-        .replace("\n\n", "").replace("\n", "").replace("\r", "");
+    let text = text.replace("\n\n", "").replace("\n", "").replace("\r", "");
 
     let regex = static_regex!("([A-Z])\\.")?;
     let t = regex.replace(&text, "$1");
