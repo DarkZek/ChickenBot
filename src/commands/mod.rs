@@ -1,4 +1,5 @@
 use std::env;
+use std::error::Error;
 
 use serenity::client::Context;
 use serenity::model::id::GuildId;
@@ -13,6 +14,7 @@ pub mod delete_commands;
 pub mod help;
 pub mod meme;
 pub mod dong;
+pub mod summarize;
 
 impl ChickenBot {
 
@@ -26,15 +28,31 @@ impl ChickenBot {
                         Err(e) => {
                             println!("Command '{}' threw an error: {}", possible_command.info().name, e);
 
-                            command.create_interaction_response(&ctx.http, |t| {
+                            // First, notify user of error
+                            let mut notified_user = false;
+
+                            match command.create_interaction_response(&ctx.http, |t| {
                                 t.kind(InteractionResponseType::ChannelMessageWithSource)
                                     .interaction_response_data(|message| message.content("There was an error processing your request, it has been sent to the bot maintenance team."))
-                            }).await.is_err().then(|| println!("Failed to notify user of error"));
+                            }).await {
+                                Ok(_) => notified_user = true,
+                                Err(e) => println!("Failed to notify user via interaction response! {}", e)
+                            }
+
+                            if !notified_user {
+                                // If the first method fails, try to DM them
+                                match command.user.direct_message(&ctx.http, |test| {
+                                    test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                                }).await {
+                                    Ok(_) => notified_user = true,
+                                    Err(e) => println!("Failed to notify user via DM! {}", e)
+                                }
+                            }
 
                             if let Ok(user) = ctx.http.get_user(130173614702985216).await {
                                 if let Err(e) = user.direct_message(&ctx.http, |message| {
-                                    println!("Command '{}' threw an error: {}", possible_command.info().name, e);
-                                    message.content(format!("Command '{}' threw an error: {}", possible_command.info().name, e))
+                                    println!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace())
+                                    message.content(format!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace()))
 
                                 }).await {
                                     println!("Error: Could not message user '{}' to send error message to. Error: {}", SETTINGS.get().as_ref().unwrap().user_manager, e)
