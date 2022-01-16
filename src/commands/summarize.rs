@@ -8,6 +8,7 @@ use html5ever::tendril::{ByteTendril, fmt, ReadExt};
 use html5ever::tokenizer::{BufferQueue, Token, Tokenizer, TokenizerOpts, TokenSink, TokenSinkResult};
 use html5ever::tokenizer::TagKind::{EndTag, StartTag};
 use html5ever::tokenizer::Token::{CharacterTokens, TagToken};
+use serenity::model::interactions::InteractionResponseType;
 use crate::error::Error;
 use crate::modules::summarizer::summarize;
 use crate::static_regex;
@@ -30,6 +31,8 @@ impl Command for SummarizeCommand {
     }
 
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
+
+        return Err(Error::Other(String::from("Heya")));
 
         command.create_interaction_response(&ctx.http, |response| {
             response.kind(InteractionResponseType::DeferredChannelMessageWithSource)

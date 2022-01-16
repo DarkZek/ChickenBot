@@ -2,6 +2,7 @@ use serenity::client::Context;
 use serenity::model::prelude::application_command::ApplicationCommandInteraction;
 use async_trait::async_trait;
 use serenity::builder::CreateApplicationCommand;
+use serenity::model::channel::Message;
 use crate::error::Error;
 
 #[derive(Debug)]
@@ -24,7 +25,8 @@ pub enum CommandType {
 pub trait Command : Sync + Send {
     fn info(&self) -> CommandInfo;
     fn parameters(&self, command: &mut CreateApplicationCommand) {}
-    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error>;
+    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> { Ok(()) }
+    async fn message(&self, ctx: &Context, message: Message) {}
     fn shutdown(&self) {}
     async fn new() -> Result<Self, Error> where Self: Sized;
 }
