@@ -51,7 +51,7 @@ impl ChickenBot {
 
                             if let Ok(user) = ctx.http.get_user(130173614702985216).await {
                                 if let Err(e) = user.direct_message(&ctx.http, |message| {
-                                    println!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace())
+                                    println!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace());
                                     message.content(format!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace()))
 
                                 }).await {
