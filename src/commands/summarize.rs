@@ -32,8 +32,6 @@ impl Command for SummarizeCommand {
 
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
-        return Err(Error::Other(String::from("Heya")));
-
         command.create_interaction_response(&ctx.http, |response| {
             response.kind(InteractionResponseType::DeferredChannelMessageWithSource)
         }).await?;

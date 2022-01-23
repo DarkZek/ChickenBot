@@ -16,9 +16,10 @@ use serenity::{
     },
     prelude::*,
 };
-use serenity::model::channel::Message;
+use serenity::model::channel::{Message};
 use serenity::model::gateway::{Activity};
-use serenity::model::id::GuildId;
+
+use serenity::model::id::{GuildId};
 use serenity::model::prelude::{OnlineStatus};
 use tokio::time::Duration;
 
@@ -113,7 +114,7 @@ impl EventHandler for ChickenBot {
 
                     ctx1.set_presence(Some(Activity::playing(presence_message)), OnlineStatus::Online).await;
 
-                    tokio::time::sleep(Duration::from_secs(2 * 60)).await;
+                    tokio::time::sleep(Duration::from_secs(5 * 60)).await;
                 }
             });
 

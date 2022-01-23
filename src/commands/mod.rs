@@ -1,6 +1,4 @@
 use std::env;
-use futures::executor::block_on;
-use futures::FutureExt;
 
 use serenity::client::Context;
 use serenity::model::channel::Message;
@@ -10,7 +8,7 @@ use serenity::model::interactions::application_command::ApplicationCommand;
 use tokio::time::Duration;
 
 use crate::ChickenBot;
-use crate::error::Error;
+use crate::error::Error::Other;
 
 pub mod command;
 pub mod delete_commands;
@@ -21,7 +19,7 @@ pub mod summarize;
 
 impl ChickenBot {
 
-    pub async fn message_sent(&self, ctx: Context, message: Message){
+    pub async fn message_sent(&self, ctx: Context, message: Message) {
 
         // Check if we should reply
         if !message.content.starts_with(">") || message.content.starts_with(">:") || message.content.starts_with("> ") || message.content.contains(' ') {
@@ -44,33 +42,34 @@ impl ChickenBot {
             for possible_command in &self.commands {
                 if possible_command.info().code == command.data.name {
 
-                    let cmd_name = possible_command.info().name;
-
                     // Run command
                     match possible_command.triggered(&ctx, command).await {
                         Ok(_) => {}
-                        Err(e) => Error::handle(Some(e), &ctx, command, cmd_name).await
-                    }
-
-                            if let Ok(user) = ctx.http.get_user(130173614702985216).await {
-                                if let Err(e) = user.direct_message(&ctx.http, |message| {
-                                    println!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace());
-                                    message.content(format!("Command '{}' threw an error '{}':\nNotified User: {}\n{:?}", possible_command.info().name, e, notified_user, e.backtrace()))
-
-                                }).await {
-                                    println!("Error: Could not message user '{}' to send error message to. Error: {}", SETTINGS.get().as_ref().unwrap().user_manager, e)
-                                }
-                            } else {
-                                println!("Error: Could not look up user '{}' to send error message to. Error: {}", SETTINGS.get().as_ref().unwrap().user_manager, e)
-                            }
-                        }
+                        Err(e) => e.handle(&ctx, &interaction, possible_command.info().name).await
                     }
 
                     return
                 }
             }
 
-            println!("No command found for command: {:?}", command)
+            Other(format!("No handler found for command: {:?}", command)).handle( &ctx, &interaction, command.data.name.clone()).await;
+
+        } else if let Interaction::MessageComponent(message) = &interaction {
+            for possible_command in &self.commands {
+
+                // Check if button starts with route to this command
+                if message.data.custom_id.starts_with(&format!("_{}", possible_command.info().code)) {
+                    // Run command
+                    match possible_command.button_clicked(&ctx, message).await {
+                        Ok(_) => {}
+                        Err(e) => e.handle(&ctx, &interaction, possible_command.info().name).await
+                    }
+
+                    return
+                }
+            }
+
+            Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &ctx, &interaction, message.data.custom_id.clone()).await;
         }
     }
 

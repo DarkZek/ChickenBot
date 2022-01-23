@@ -137,6 +137,7 @@ dependencies = [
  "fancy-regex",
  "futures",
  "html5ever",
+ "lazy_static",
  "markup5ever_rcdom",
  "rand",
  "reqwest",
