@@ -1,6 +1,5 @@
 #![feature(once_cell)]
 #![feature(async_closure)]
-#![feature(backtrace)]
 
 use std::env;
 use std::sync::Arc;
@@ -17,9 +16,10 @@ use serenity::{
     },
     prelude::*,
 };
-use serenity::model::gateway::Activity;
+use serenity::model::channel::Message;
+use serenity::model::gateway::{Activity};
 use serenity::model::id::GuildId;
-use serenity::model::prelude::OnlineStatus;
+use serenity::model::prelude::{OnlineStatus};
 use tokio::time::Duration;
 
 use crate::commands::command::Command;
@@ -80,6 +80,10 @@ impl EventHandler for ChickenBot {
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         self.interaction_created(ctx, interaction).await
+    }
+
+    async fn message(&self, ctx: Context, message: Message) {
+        self.message_sent(ctx, message).await
     }
 
     async fn cache_ready(&self, ctx: Context, guilds: Vec<GuildId>) {

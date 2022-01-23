@@ -1,13 +1,16 @@
 use std::env;
-use std::error::Error;
+use futures::executor::block_on;
+use futures::FutureExt;
 
 use serenity::client::Context;
+use serenity::model::channel::Message;
 use serenity::model::id::GuildId;
-use serenity::model::interactions::{Interaction, InteractionResponseType};
+use serenity::model::interactions::Interaction;
 use serenity::model::interactions::application_command::ApplicationCommand;
+use tokio::time::Duration;
 
 use crate::ChickenBot;
-use crate::settings::SETTINGS;
+use crate::error::Error;
 
 pub mod command;
 pub mod delete_commands;
@@ -18,36 +21,36 @@ pub mod summarize;
 
 impl ChickenBot {
 
+    pub async fn message_sent(&self, ctx: Context, message: Message){
+
+        // Check if we should reply
+        if !message.content.starts_with(">") || message.content.starts_with(">:") || message.content.starts_with("> ") || message.content.contains(' ') {
+            return;
+        }
+
+        let result = message.reply(&ctx.http, "Brawk! Chicken Bot has been updated to to exclusively use Slash Commands. Use /help to start. This warning will be removed in April 2022 when Discord restricts access to messages").await;
+
+        tokio::time::sleep(Duration::from_secs(20)).await;
+
+        if let Ok(msg) = result {
+            msg.delete(&ctx.http).await;
+        }
+
+    }
+
     pub async fn interaction_created(&self, ctx: Context, interaction: Interaction) {
 
         if let Interaction::ApplicationCommand(command) = &interaction {
             for possible_command in &self.commands {
                 if possible_command.info().code == command.data.name {
+
+                    let cmd_name = possible_command.info().name;
+
+                    // Run command
                     match possible_command.triggered(&ctx, command).await {
                         Ok(_) => {}
-                        Err(e) => {
-                            println!("Command '{}' threw an error: {}", possible_command.info().name, e);
-
-                            // First, notify user of error
-                            let mut notified_user = false;
-
-                            match command.create_interaction_response(&ctx.http, |t| {
-                                t.kind(InteractionResponseType::ChannelMessageWithSource)
-                                    .interaction_response_data(|message| message.content("There was an error processing your request, it has been sent to the bot maintenance team."))
-                            }).await {
-                                Ok(_) => notified_user = true,
-                                Err(e) => println!("Failed to notify user via interaction response! {}", e)
-                            }
-
-                            if !notified_user {
-                                // If the first method fails, try to DM them
-                                match command.user.direct_message(&ctx.http, |test| {
-                                    test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
-                                }).await {
-                                    Ok(_) => notified_user = true,
-                                    Err(e) => println!("Failed to notify user via DM! {}", e)
-                                }
-                            }
+                        Err(e) => Error::handle(Some(e), &ctx, command, cmd_name).await
+                    }
 
                             if let Ok(user) = ctx.http.get_user(130173614702985216).await {
                                 if let Err(e) = user.direct_message(&ctx.http, |message| {
