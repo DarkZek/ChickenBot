@@ -1,0 +1,24 @@
+version: "3"
+services:
+  bot:
+    image: rustlang/rust:nightly
+    entrypoint: 'cargo run ..'
+    working_dir: '/usr/src/bot/Chicken Bot'
+    restart: on-failure
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/bot
+      - target:/usr/src/bot/target/
+
+  db:
+    image: 'postgres:14.1-alpine'
+    restart: always
+    env_file:
+      - .env
+
+volumes:
+  db:
+  target:

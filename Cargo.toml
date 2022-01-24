@@ -18,3 +18,5 @@ fancy-regex = "0.7.1"
 html5ever = "0.25.1"
 markup5ever_rcdom = "0.1.0"
 lazy_static = "1.4.0"
+diesel = { version = "1.4.4", features = ["postgres"] }
+dotenv = "0.15.0"

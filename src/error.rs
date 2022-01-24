@@ -90,6 +90,7 @@ impl Error {
                     Err(e) => println!("Failed to notify user via interaction response! {}", e)
                 }
             }
+            Interaction::Autocomplete(_) => {}
         };
 
         if !notified_user {
@@ -113,6 +114,7 @@ impl Error {
                         Err(e) => println!("Failed to notify user via DM! {}", e)
                     }
                 }
+                Interaction::Autocomplete(_) => {}
             }
         }
 
