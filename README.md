@@ -2,6 +2,11 @@
 ## Aim
 Chicken Bot is a discord bot based off the JDA java framework. Chicken Bot aims to fill in the gaps between the many different bots - with some playing music, some showing memes and others converting measurements. This is where chicken bot comes in. Chicken Bot aims to do all those things in one small delicious package.
 
+## Running
+
+First make a copy of the example.env to .env
+Use the command `docker-compose up` to run Chicken Bot.
+
 ## Configuration
 
 Because Chicken Bot aims to be a widespread Discord bot it needs to be able to suit a servers needs - Chicken Bot is built on a strong Configuration API that makes it incredibly easy to find the configuration of any of the servers Chicken Bot is operating on.
