@@ -67,62 +67,65 @@ impl fmt::Display for Error {
 }
 
 impl Error {
-    pub async fn handle(&self, ctx: &Context, interaction: &Interaction, cmd: String) {
+    pub async fn handle(&self, ctx: &Context, interaction: Option<&Interaction>, cmd: &str) {
 
         println!("Command '{}' threw an error '{:?}':\n", cmd, self);
 
         // First, notify user of error
         let mut notified_user = false;
 
-        match interaction {
-            Interaction::Ping(_) => return,
-            Interaction::ApplicationCommand(command) => {
-                match command.create_interaction_response(&ctx.http, |t| {
-                    t.kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message|
-                            message.content("There was an error processing your request, it has been sent to the bot maintenance team.")
-                                .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
-                }).await {
-                    Ok(_) => notified_user = true,
-                    Err(e) => println!("Failed to notify user via interaction response! {}", e)
-                }
-            },
-            Interaction::MessageComponent(message) => {
-                match message.create_interaction_response(&ctx.http, |t| {
-                    t.kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message|
-                            message.content("There was an error processing your request, it has been sent to the bot maintenance team.")
-                                .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
-                }).await {
-                    Ok(_) => notified_user = true,
-                    Err(e) => println!("Failed to notify user via interaction response! {}", e)
-                }
-            }
-            Interaction::Autocomplete(_) => {}
-        };
-
-        if !notified_user {
-            match interaction {
+        // Try to notify of error
+        if let Some(val) = interaction {
+            match val {
                 Interaction::Ping(_) => return,
                 Interaction::ApplicationCommand(command) => {
-                    // If the first method fails, try to DM them
-                    match command.user.direct_message(&ctx.http, |test| {
-                        test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                    match command.create_interaction_response(&ctx.http, |t| {
+                        t.kind(InteractionResponseType::ChannelMessageWithSource)
+                            .interaction_response_data(|message|
+                                message.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                                    .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
                     }).await {
                         Ok(_) => notified_user = true,
-                        Err(e) => println!("Failed to notify user via DM! {}", e)
+                        Err(e) => println!("Failed to notify user via interaction response! {}", e)
                     }
-                }
+                },
                 Interaction::MessageComponent(message) => {
-                    // If the first method fails, try to DM them
-                    match message.user.direct_message(&ctx.http, |test| {
-                        test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                    match message.create_interaction_response(&ctx.http, |t| {
+                        t.kind(InteractionResponseType::ChannelMessageWithSource)
+                            .interaction_response_data(|message|
+                                message.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                                    .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
                     }).await {
                         Ok(_) => notified_user = true,
-                        Err(e) => println!("Failed to notify user via DM! {}", e)
+                        Err(e) => println!("Failed to notify user via interaction response! {}", e)
                     }
                 }
                 Interaction::Autocomplete(_) => {}
+            };
+
+            if !notified_user {
+                match val {
+                    Interaction::Ping(_) => return,
+                    Interaction::ApplicationCommand(command) => {
+                        // If the first method fails, try to DM them
+                        match command.user.direct_message(&ctx.http, |test| {
+                            test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                        }).await {
+                            Ok(_) => notified_user = true,
+                            Err(e) => println!("Failed to notify user via DM! {}", e)
+                        }
+                    }
+                    Interaction::MessageComponent(message) => {
+                        // If the first method fails, try to DM them
+                        match message.user.direct_message(&ctx.http, |test| {
+                            test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                        }).await {
+                            Ok(_) => notified_user = true,
+                            Err(e) => println!("Failed to notify user via DM! {}", e)
+                        }
+                    }
+                    Interaction::Autocomplete(_) => {}
+                }
             }
         }
 

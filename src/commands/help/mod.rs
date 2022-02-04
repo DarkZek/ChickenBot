@@ -4,6 +4,7 @@ use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue, ApplicationCommandOptionType};
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
+use lazy_static::lazy_static;
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::InteractionApplicationCommandCallbackDataFlags;
 use crate::commands::help::changelog::Changelog;
@@ -16,21 +17,23 @@ pub mod changelog;
  * Created by Marshall Scott on 8/01/22.
  */
 
+lazy_static! {
+    static ref INFO: CommandInfo = CommandInfoBuilder::new()
+            .with_name("Help")
+            .with_code("help")
+            .with_description("Gets chicken bot help resources")
+            .with_category(CommandCategory::Administration)
+            .with_usage("/help")
+            .build();
+}
+
 pub struct HelpCommand {
     cached_commit_msg: Option<Changelog>
 }
 
 #[async_trait]
 impl Command for HelpCommand {
-    fn info(&self) -> CommandInfo {
-        CommandInfoBuilder::new()
-            .with_name("Help")
-            .with_code("help")
-            .with_description("Gets chicken bot help resources")
-            .with_category(CommandCategory::Administration)
-            .with_usage("/help")
-            .build()
-    }
+    fn info(&self) -> &CommandInfo { &INFO }
 
     fn parameters(&self, command: &mut CreateApplicationCommand) {
         command.create_option(|option| {

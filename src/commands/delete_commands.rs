@@ -3,25 +3,28 @@ use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommand, ApplicationCommandInteraction};
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
+use lazy_static::lazy_static;
 use crate::error::Error;
 
 /**
  * Created by Marshall Scott on 8/01/22.
  */
 
-pub struct DeleteCommandsCommand {}
-
-#[async_trait]
-impl Command for DeleteCommandsCommand {
-    fn info(&self) -> CommandInfo {
-        CommandInfoBuilder::new()
+lazy_static! {
+    static ref INFO: CommandInfo = CommandInfoBuilder::new()
             .with_name("Delete Commands")
             .with_code("delete_commands")
             .with_description("Deletes all global commands for the bot")
             .with_category(CommandCategory::Administration)
             .with_allow_bots(true)
-            .build()
-    }
+            .build();
+}
+
+pub struct DeleteCommandsCommand {}
+
+#[async_trait]
+impl Command for DeleteCommandsCommand {
+    fn info(&self) -> &CommandInfo { &INFO }
 
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 

@@ -8,7 +8,9 @@ use html5ever::tendril::{ByteTendril, fmt, ReadExt};
 use html5ever::tokenizer::{BufferQueue, Token, Tokenizer, TokenizerOpts, TokenSink, TokenSinkResult};
 use html5ever::tokenizer::TagKind::{EndTag, StartTag};
 use html5ever::tokenizer::Token::{CharacterTokens, TagToken};
+use lazy_static::lazy_static;
 use serenity::model::interactions::InteractionResponseType;
+use serenity::model::prelude::InteractionApplicationCommandCallbackDataFlags;
 use crate::error::Error;
 use crate::modules::summarizer::summarize;
 use crate::static_regex;
@@ -17,18 +19,20 @@ use crate::static_regex;
  * Created by Marshall Scott on 14/01/22.
  */
 
-pub struct SummarizeCommand {}
-
-#[async_trait]
-impl Command for SummarizeCommand {
-    fn info(&self) -> CommandInfo {
-        CommandInfoBuilder::new()
+lazy_static! {
+    static ref INFO: CommandInfo = CommandInfoBuilder::new()
             .with_name("Summarize Link")
             .with_code("tldr")
             .with_description("Summarizes the last link sent in chat")
             .with_category(CommandCategory::Internet)
-            .build()
-    }
+            .build();
+}
+
+pub struct SummarizeCommand {}
+
+#[async_trait]
+impl Command for SummarizeCommand {
+    fn info(&self) -> &CommandInfo { &INFO }
 
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
@@ -71,6 +75,7 @@ impl Command for SummarizeCommand {
         if response.is_none() {
             command.create_followup_message(&ctx.http, |t| {
                 t.content("No article links in the last 10 messages")
+                    .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
             }).await?;
             return Ok(());
         }

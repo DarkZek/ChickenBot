@@ -3,6 +3,7 @@ use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::ApplicationCommandInteraction;
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
+use lazy_static::lazy_static;
 use serenity::model::interactions::message_component::MessageComponentInteraction;
 use serenity::model::prelude::InteractionApplicationCommandCallbackDataFlags;
 use crate::error::Error;
@@ -13,19 +14,20 @@ use crate::settings::SETTINGS;
  * Created by Marshall Scott on 8/01/22.
  */
 
-pub struct MemesCommand {
-}
-
-#[async_trait]
-impl Command for MemesCommand {
-    fn info(&self) -> CommandInfo {
-        CommandInfoBuilder::new()
+lazy_static! {
+    static ref INFO: CommandInfo = CommandInfoBuilder::new()
             .with_name("Meme Me")
             .with_code("meme")
             .with_description("Fetches the hottest new memes straight from the source, iFunny")
             .with_category(CommandCategory::Fun)
-            .build()
-    }
+            .build();
+}
+
+pub struct MemesCommand {}
+
+#[async_trait]
+impl Command for MemesCommand {
+    fn info(&self) -> &CommandInfo { &INFO }
 
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 

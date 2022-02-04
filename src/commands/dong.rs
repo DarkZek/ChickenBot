@@ -2,6 +2,7 @@ use serenity::client::Context;
 use serenity::model::interactions::application_command::ApplicationCommandInteraction;
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
 use async_trait::async_trait;
+use lazy_static::lazy_static;
 use rand::Rng;
 use tokio::io::AsyncReadExt;
 use crate::error::Error;
@@ -11,19 +12,23 @@ use serde::Deserialize;
  * Created by Marshall Scott on 8/01/22.
  */
 
+lazy_static! {
+    static ref INFO: CommandInfo = CommandInfoBuilder::new()
+            .with_name("Do Online Now Guys")
+            .with_code("dong")
+            .with_description("Fetches a random website to cure boredom")
+            .with_category(CommandCategory::Fun)
+            .build();
+}
+
 pub struct DongCommand {
     dongs: Vec<Dong>
 }
 
 #[async_trait]
 impl Command for DongCommand {
-    fn info(&self) -> CommandInfo {
-        CommandInfoBuilder::new()
-            .with_name("Do Online Now Guys")
-            .with_code("dong")
-            .with_description("Fetches a random website to cure boredom")
-            .with_category(CommandCategory::Fun)
-            .build()
+    fn info(&self) -> &CommandInfo {
+        &INFO
     }
 
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {

@@ -24,11 +24,11 @@ pub enum CommandType {
 #[allow(dead_code)]
 #[allow(unused_variables)]
 pub trait Command : Sync + Send {
-    fn info(&self) -> CommandInfo;
+    fn info(&self) -> &CommandInfo;
     fn parameters(&self, command: &mut CreateApplicationCommand) {}
     async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> { Ok(()) }
     async fn button_clicked(&self, ctx: &Context, message: &MessageComponentInteraction) -> Result<(), Error> { Ok(()) }
-    async fn message(&self, ctx: &Context, message: Message) {}
+    async fn message(&self, ctx: &Context, message: &Message) -> Result<(), Error> { Ok(()) }
     fn shutdown(&self) {}
     async fn new() -> Result<Self, Error> where Self: Sized;
 }

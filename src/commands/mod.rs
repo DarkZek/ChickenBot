@@ -16,10 +16,17 @@ pub mod help;
 pub mod meme;
 pub mod dong;
 pub mod summarize;
+pub mod banter;
 
 impl ChickenBot {
 
     pub async fn message_sent(&self, ctx: Context, message: Message) {
+
+        for i in &self.commands {
+            if let Err(e) = i.message(&ctx, &message).await {
+                e.handle(&ctx, None, &i.info().name).await
+            }
+        }
 
         // Check if we should reply
         if !message.content.starts_with(">") || message.content.starts_with(">:") || message.content.starts_with("> ") || message.content.contains(' ') {
@@ -45,14 +52,14 @@ impl ChickenBot {
                     // Run command
                     match possible_command.triggered(&ctx, command).await {
                         Ok(_) => {}
-                        Err(e) => e.handle(&ctx, &interaction, possible_command.info().name).await
+                        Err(e) => e.handle(&ctx, Some(&interaction), &possible_command.info().name).await
                     }
 
                     return
                 }
             }
 
-            Other(format!("No handler found for command: {:?}", command)).handle( &ctx, &interaction, command.data.name.clone()).await;
+            Other(format!("No handler found for command: {:?}", command)).handle( &ctx, Some(&interaction), &command.data.name.clone()).await;
 
         } else if let Interaction::MessageComponent(message) = &interaction {
             for possible_command in &self.commands {
@@ -62,14 +69,14 @@ impl ChickenBot {
                     // Run command
                     match possible_command.button_clicked(&ctx, message).await {
                         Ok(_) => {}
-                        Err(e) => e.handle(&ctx, &interaction, possible_command.info().name).await
+                        Err(e) => e.handle(&ctx, Some(&interaction), &possible_command.info().name).await
                     }
 
                     return
                 }
             }
 
-            Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &ctx, &interaction, message.data.custom_id.clone()).await;
+            Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &ctx, Some(&interaction), &message.data.custom_id.clone()).await;
         }
     }
 
@@ -86,8 +93,12 @@ impl ChickenBot {
             let result = guild_id.set_application_commands(&ctx.http, |commands| {
 
                 for cmd in &self.commands {
+                    if cmd.info().code.is_empty() {
+                        continue;
+                    }
+
                     commands.create_application_command(|command| {
-                        cmd.parameters(command.name(cmd.info().code).description(cmd.info().description));
+                        cmd.parameters(command.name(&cmd.info().code).description(&cmd.info().description));
                         command
 
                     });
@@ -105,7 +116,7 @@ impl ChickenBot {
             // Loop through all commands and add them to the bot
             for cmd in &self.commands {
                 let result = ApplicationCommand::create_global_application_command(&ctx.http, |command| {
-                    cmd.parameters(command.name(cmd.info().code).description(cmd.info().description));
+                    cmd.parameters(command.name(&cmd.info().code).description(&cmd.info().description));
                     command
                 }).await;
 
