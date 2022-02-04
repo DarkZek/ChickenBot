@@ -4,8 +4,19 @@ Chicken Bot is a discord bot based off the JDA java framework. Chicken Bot aims 
 
 ## Running
 
-First make a copy of the example.env to .env
-Use the command `docker-compose up` to run Chicken Bot.
+Use the command `docker-compose up bot` to run Chicken Bot.
+
+# Setup
+
+First make a copy of the example.env to .env and fill it out
+
+### Production
+
+For production releases remove DEV=1 from .env and rename prod-docker-compose.override.yml to docker-compose.override.yml
+
+### Dev
+
+For SQL work install [diesel-rs](https://diesel.rs/guides/getting-started)
 
 ## Configuration
 

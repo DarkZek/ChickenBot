@@ -1,26 +1,33 @@
 #![feature(once_cell)]
 #![feature(async_closure)]
 
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+extern crate dotenv;
+
 use std::env;
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
+use diesel::PgConnection;
+use diesel::r2d2::{ConnectionManager, Pool};
+use diesel_migrations::embed_migrations;
 
 use serenity::{
     async_trait,
     model::{
         gateway::Ready,
-        interactions::{
-            Interaction,
-        },
+        interactions::Interaction,
     },
     prelude::*,
 };
-use serenity::model::channel::{Message};
-use serenity::model::gateway::{Activity};
+use serenity::model::channel::Message;
+use serenity::model::gateway::Activity;
 
-use serenity::model::id::{GuildId};
-use serenity::model::prelude::{OnlineStatus};
+use serenity::model::id::GuildId;
+use serenity::model::prelude::OnlineStatus;
 use tokio::time::Duration;
 
 use crate::commands::command::Command;
@@ -29,6 +36,7 @@ use crate::commands::dong::DongCommand;
 use crate::commands::help::HelpCommand;
 use crate::commands::meme::MemesCommand;
 use crate::commands::summarize::SummarizeCommand;
+use crate::db::{establish_connection, get_server};
 use crate::presence::PresenceMessage;
 use crate::settings::Settings;
 
@@ -36,22 +44,27 @@ pub mod commands;
 pub mod modules;
 pub mod settings;
 pub mod error;
-mod presence;
+pub mod presence;
+pub mod db;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+embed_migrations!();
 
 struct ChickenBot {
     commands: Vec<Box<dyn Command>>,
     presence_loop_running: AtomicBool,
-    guild_count: Arc<Mutex<usize>>
+    guild_count: Arc<Mutex<usize>>,
+    connection: Pool<ConnectionManager<PgConnection>>
 }
 
 impl ChickenBot {
-    pub async fn new() -> ChickenBot {
+    pub async fn new(connection: Pool<ConnectionManager<PgConnection>>) -> ChickenBot {
         ChickenBot {
             commands: ChickenBot::load_commands().await,
             presence_loop_running: AtomicBool::new(false),
-            guild_count: Arc::new(Mutex::new(0))
+            guild_count: Arc::new(Mutex::new(0)),
+            connection
         }
     }
 
@@ -127,6 +140,12 @@ impl EventHandler for ChickenBot {
 #[tokio::main]
 async fn main() {
 
+    let connection = establish_connection();
+
+    let mut conn = connection.get().unwrap();
+
+    println!("{:?}", get_server(874804013286195211, &mut *conn));
+
     Settings::load();
 
     // Configure the client with your Discord bot token in the environment.
@@ -140,7 +159,7 @@ async fn main() {
 
     // Build our client.
     let mut client = Client::builder(token)
-        .event_handler(ChickenBot::new().await)
+        .event_handler(ChickenBot::new(connection).await)
         .application_id(application_id)
         .await
         .expect("Error creating client");
