@@ -8,6 +8,7 @@ use serenity::model::interactions::application_command::ApplicationCommand;
 use tokio::time::Duration;
 
 use crate::ChickenBot;
+use crate::commands::command::AppContext;
 use crate::error::Error::Other;
 
 pub mod command;
@@ -20,10 +21,12 @@ pub mod banter;
 
 impl ChickenBot {
 
-    pub async fn message_sent(&self, ctx: Context, message: Message) {
+    pub async fn message_sent(&self, ctx: &Context, message: Message) {
+
+        let context = AppContext { api: ctx, bot: self };
 
         for i in &self.commands {
-            if let Err(e) = i.message(&ctx, &message).await {
+            if let Err(e) = i.message(&context, &message).await {
                 e.handle(&ctx, None, &i.info().name).await
             }
         }
@@ -43,14 +46,16 @@ impl ChickenBot {
 
     }
 
-    pub async fn interaction_created(&self, ctx: Context, interaction: Interaction) {
+    pub async fn interaction_created(&self, ctx: &Context, interaction: Interaction) {
+
+        let context = AppContext { api: ctx, bot: self };
 
         if let Interaction::ApplicationCommand(command) = &interaction {
             for possible_command in &self.commands {
                 if possible_command.info().code == command.data.name {
 
                     // Run command
-                    match possible_command.triggered(&ctx, command).await {
+                    match possible_command.triggered(&context, command).await {
                         Ok(_) => {}
                         Err(e) => e.handle(&ctx, Some(&interaction), &possible_command.info().name).await
                     }
@@ -67,7 +72,7 @@ impl ChickenBot {
                 // Check if button starts with route to this command
                 if message.data.custom_id.starts_with(&format!("_{}", possible_command.info().code)) {
                     // Run command
-                    match possible_command.button_clicked(&ctx, message).await {
+                    match possible_command.button_clicked(&context, message).await {
                         Ok(_) => {}
                         Err(e) => e.handle(&ctx, Some(&interaction), &possible_command.info().name).await
                     }

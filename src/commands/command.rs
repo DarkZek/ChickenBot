@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::channel::Message;
 use serenity::model::prelude::message_component::MessageComponentInteraction;
+use crate::ChickenBot;
 use crate::error::Error;
 
 #[derive(Debug)]
@@ -26,9 +27,9 @@ pub enum CommandType {
 pub trait Command : Sync + Send {
     fn info(&self) -> &CommandInfo;
     fn parameters(&self, command: &mut CreateApplicationCommand) {}
-    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> { Ok(()) }
-    async fn button_clicked(&self, ctx: &Context, message: &MessageComponentInteraction) -> Result<(), Error> { Ok(()) }
-    async fn message(&self, ctx: &Context, message: &Message) -> Result<(), Error> { Ok(()) }
+    async fn triggered(&self, ctx: &AppContext, command: &ApplicationCommandInteraction) -> Result<(), Error> { Ok(()) }
+    async fn button_clicked(&self, ctx: &AppContext, message: &MessageComponentInteraction) -> Result<(), Error> { Ok(()) }
+    async fn message(&self, ctx: &AppContext, message: &Message) -> Result<(), Error> { Ok(()) }
     fn shutdown(&self) {}
     async fn new() -> Result<Self, Error> where Self: Sized;
 }
@@ -119,4 +120,9 @@ impl CommandInfoBuilder {
         }
     }
 
+}
+
+pub struct AppContext<'a> {
+    pub api: &'a Context,
+    pub bot: &'a ChickenBot
 }

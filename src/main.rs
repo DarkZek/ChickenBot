@@ -29,6 +29,7 @@ use serenity::model::gateway::Activity;
 use serenity::model::id::GuildId;
 use serenity::model::prelude::OnlineStatus;
 use tokio::time::Duration;
+use crate::commands::banter::BanterCommand;
 
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
@@ -51,7 +52,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 embed_migrations!();
 
-struct ChickenBot {
+pub struct ChickenBot {
     commands: Vec<Box<dyn Command>>,
     presence_loop_running: AtomicBool,
     guild_count: Arc<Mutex<usize>>,
@@ -74,6 +75,7 @@ impl ChickenBot {
             Box::new(MemesCommand::new().await.unwrap()),
             Box::new(DongCommand::new().await.unwrap()),
             Box::new(SummarizeCommand::new().await.unwrap()),
+            Box::new(BanterCommand::new().await.unwrap()),
         ];
 
         if env::var("DEV").is_ok() {
@@ -93,11 +95,11 @@ impl EventHandler for ChickenBot {
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        self.interaction_created(ctx, interaction).await
+        self.interaction_created(&ctx, interaction).await
     }
 
     async fn message(&self, ctx: Context, message: Message) {
-        self.message_sent(ctx, message).await
+        self.message_sent(&ctx, message).await
     }
 
     async fn cache_ready(&self, ctx: Context, guilds: Vec<GuildId>) {
@@ -141,10 +143,6 @@ impl EventHandler for ChickenBot {
 async fn main() {
 
     let connection = establish_connection();
-
-    let mut conn = connection.get().unwrap();
-
-    println!("{:?}", get_server(874804013286195211, &mut *conn));
 
     Settings::load();
 

@@ -1,8 +1,7 @@
 use std::mem;
 use std::sync::{Arc, Mutex};
-use serenity::client::Context;
 use serenity::model::interactions::application_command::ApplicationCommandInteraction;
-use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
+use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory, AppContext};
 use async_trait::async_trait;
 use html5ever::tendril::{ByteTendril, fmt, ReadExt};
 use html5ever::tokenizer::{BufferQueue, Token, Tokenizer, TokenizerOpts, TokenSink, TokenSinkResult};
@@ -15,7 +14,7 @@ use crate::error::Error;
 use crate::modules::summarizer::summarize;
 use crate::static_regex;
 
-/**
+/*
  * Created by Marshall Scott on 14/01/22.
  */
 
@@ -34,16 +33,16 @@ pub struct SummarizeCommand {}
 impl Command for SummarizeCommand {
     fn info(&self) -> &CommandInfo { &INFO }
 
-    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
+    async fn triggered(&self, ctx: &AppContext, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
-        command.create_interaction_response(&ctx.http, |response| {
+        command.create_interaction_response(&ctx.api.http, |response| {
             response.kind(InteractionResponseType::DeferredChannelMessageWithSource)
         }).await?;
 
         // Get last link
         let mut response: Option<String> = None;
 
-        let messages = command.channel_id.messages(&ctx.http, |msgs| msgs.limit(10)).await?;
+        let messages = command.channel_id.messages(&ctx.api.http, |msgs| msgs.limit(10)).await?;
 
         // Regex to find links
         let regex = match static_regex!("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])") {
@@ -73,7 +72,7 @@ impl Command for SummarizeCommand {
         }
 
         if response.is_none() {
-            command.create_followup_message(&ctx.http, |t| {
+            command.create_followup_message(&ctx.api.http, |t| {
                 t.content("No article links in the last 10 messages")
                     .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
             }).await?;
@@ -91,7 +90,7 @@ impl Command for SummarizeCommand {
             }
         };
 
-        command.create_followup_message(&ctx.http, |t| {
+        command.create_followup_message(&ctx.api.http, |t| {
             t.content(val)
         }).await?;
 

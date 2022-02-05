@@ -1,8 +1,7 @@
 use std::env;
-use serenity::client::Context;
 use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommandInteraction, ApplicationCommandInteractionDataOptionValue, ApplicationCommandOptionType};
-use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
+use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory, AppContext};
 use async_trait::async_trait;
 use lazy_static::lazy_static;
 use serenity::builder::CreateApplicationCommand;
@@ -13,7 +12,7 @@ use crate::settings::SETTINGS;
 
 pub mod changelog;
 
-/**
+/*
  * Created by Marshall Scott on 8/01/22.
  */
 
@@ -45,7 +44,7 @@ impl Command for HelpCommand {
         });
     }
 
-    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
+    async fn triggered(&self, ctx: &AppContext, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
         let data = match command.data.options.get(0) {
             None => "Test".to_string(),
@@ -81,7 +80,7 @@ impl Command for HelpCommand {
             }
         };
 
-        command.create_interaction_response(&ctx.http, |response| {
+        command.create_interaction_response(&ctx.api.http, |response| {
             response
                 .kind(InteractionResponseType::ChannelMessageWithSource)
                 .interaction_response_data(|message| message.content(data).flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))

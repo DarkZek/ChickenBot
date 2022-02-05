@@ -1,12 +1,11 @@
-use serenity::client::Context;
 use serenity::model::interactions::InteractionResponseType;
 use serenity::model::interactions::application_command::{ApplicationCommand, ApplicationCommandInteraction};
-use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
+use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory, AppContext};
 use async_trait::async_trait;
 use lazy_static::lazy_static;
 use crate::error::Error;
 
-/**
+/*
  * Created by Marshall Scott on 8/01/22.
  */
 
@@ -26,22 +25,22 @@ pub struct DeleteCommandsCommand {}
 impl Command for DeleteCommandsCommand {
     fn info(&self) -> &CommandInfo { &INFO }
 
-    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
+    async fn triggered(&self, ctx: &AppContext, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
-        let commands = match ApplicationCommand::get_global_application_commands(&ctx.http).await {
+        let commands = match ApplicationCommand::get_global_application_commands(&ctx.api.http).await {
             Ok(res) => res,
             Err(e) => panic!("Error: {}", e)
         };
 
         for command in commands {
-            if let Err(e) = ApplicationCommand::delete_global_application_command(&ctx.http, command.id).await {
+            if let Err(e) = ApplicationCommand::delete_global_application_command(&ctx.api.http, command.id).await {
                 println!("Failed to delete global application command {}. {}", command.name, e)
             }
         }
 
         println!("Successfully deleted all global commands for bot");
 
-        command.create_interaction_response(&ctx.http, |t| {
+        command.create_interaction_response(&ctx.api.http, |t| {
             t.kind(InteractionResponseType::ChannelMessageWithSource)
                 .interaction_response_data(|message| message.content("Successfully deleted all global commands for bot"))
         }).await?;

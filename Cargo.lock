@@ -142,6 +142,7 @@ dependencies = [
  "html5ever",
  "lazy_static",
  "markup5ever_rcdom",
+ "r2d2",
  "rand",
  "reqwest",
  "serde",

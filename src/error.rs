@@ -16,6 +16,7 @@ pub enum Error {
     CronoParseError(ParseError),
     Serde(serde_json::Error),
     Database(diesel::result::Error),
+    DatabasePooling(r2d2::Error),
     Other(String)
 }
 
@@ -49,6 +50,12 @@ impl From<diesel::result::Error> for Error {
     }
 }
 
+impl From<r2d2::Error> for Error {
+    fn from(err: r2d2::Error) -> Self {
+        Error::DatabasePooling(err)
+    }
+}
+
 impl std::error::Error for Error {}
 
 impl fmt::Display for Error {
@@ -61,6 +68,7 @@ impl fmt::Display for Error {
             Error::Serenity(e) => e.fmt(f),
             Error::Serde(e) => e.fmt(f),
             Error::Database(db) => db.fmt(f),
+            Error::DatabasePooling(db) => db.fmt(f),
             Error::Other(str) => str.fmt(f),
         }
     }

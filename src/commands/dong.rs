@@ -1,6 +1,5 @@
-use serenity::client::Context;
 use serenity::model::interactions::application_command::ApplicationCommandInteraction;
-use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory};
+use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory, AppContext};
 use async_trait::async_trait;
 use lazy_static::lazy_static;
 use rand::Rng;
@@ -8,7 +7,7 @@ use tokio::io::AsyncReadExt;
 use crate::error::Error;
 use serde::Deserialize;
 
-/**
+/*
  * Created by Marshall Scott on 8/01/22.
  */
 
@@ -31,7 +30,7 @@ impl Command for DongCommand {
         &INFO
     }
 
-    async fn triggered(&self, ctx: &Context, command: &ApplicationCommandInteraction) -> Result<(), Error> {
+    async fn triggered(&self, ctx: &AppContext, command: &ApplicationCommandInteraction) -> Result<(), Error> {
 
         if self.dongs.len() == 0 {
             println!("Error: Dongs list empty");
@@ -40,7 +39,7 @@ impl Command for DongCommand {
 
         let dong = &self.dongs[rand::thread_rng().gen_range(0, self.dongs.len())];
 
-        command.create_interaction_response(&ctx.http, |message| {
+        command.create_interaction_response(&ctx.api.http, |message| {
             message.interaction_response_data(|data| {
                 data.content(format!( "```{}```<{}>", dong.description, dong.url))
             })
