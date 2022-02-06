@@ -29,7 +29,7 @@ impl ChickenBot {
 
         for i in &self.commands {
             if let Err(e) = i.message(&context, &message).await {
-                e.handle(&ctx, None, &i.info().name).await
+                e.handle(&context, None, &i.info().name).await
             }
         }
 
@@ -59,14 +59,14 @@ impl ChickenBot {
                     // Run command
                     match possible_command.triggered(&context, command).await {
                         Ok(_) => {}
-                        Err(e) => e.handle(&ctx, Some(&interaction), &possible_command.info().name).await
+                        Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
                     }
 
                     return
                 }
             }
 
-            Other(format!("No handler found for command: {:?}", command)).handle( &ctx, Some(&interaction), &command.data.name.clone()).await;
+            Other(format!("No handler found for command: {:?}", command)).handle( &context, Some(&interaction), &command.data.name.clone()).await;
 
         } else if let Interaction::MessageComponent(message) = &interaction {
             for possible_command in &self.commands {
@@ -76,14 +76,14 @@ impl ChickenBot {
                     // Run command
                     match possible_command.button_clicked(&context, message).await {
                         Ok(_) => {}
-                        Err(e) => e.handle(&ctx, Some(&interaction), &possible_command.info().name).await
+                        Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
                     }
 
                     return
                 }
             }
 
-            Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &ctx, Some(&interaction), &message.data.custom_id.clone()).await;
+            Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &context, Some(&interaction), &message.data.custom_id.clone()).await;
         }
     }
 

@@ -1,10 +1,11 @@
 use std::fmt;
 use chrono::ParseError;
 use reqwest::StatusCode;
-use serenity::client::Context;
 use serenity::model::interactions::{InteractionResponseType};
 use serenity::model::prelude::{Interaction, InteractionApplicationCommandCallbackDataFlags};
 use serenity::prelude::SerenityError;
+use crate::commands::command::AppContext;
+use crate::reactions::ReactionType;
 use crate::settings::SETTINGS;
 
 #[derive(Debug)]
@@ -17,6 +18,7 @@ pub enum Error {
     Serde(serde_json::Error),
     Database(diesel::result::Error),
     DatabasePooling(r2d2::Error),
+    IO(std::io::Error),
     Other(String)
 }
 
@@ -56,6 +58,12 @@ impl From<r2d2::Error> for Error {
     }
 }
 
+impl From<std::io::Error> for Error {
+    fn from(err: std::io::Error) -> Self {
+        Error::IO(err)
+    }
+}
+
 impl std::error::Error for Error {}
 
 impl fmt::Display for Error {
@@ -69,13 +77,16 @@ impl fmt::Display for Error {
             Error::Serde(e) => e.fmt(f),
             Error::Database(db) => db.fmt(f),
             Error::DatabasePooling(db) => db.fmt(f),
+            Error::IO(io) => io.fmt(f),
             Error::Other(str) => str.fmt(f),
         }
     }
 }
 
 impl Error {
-    pub async fn handle(&self, ctx: &Context, interaction: Option<&Interaction>, cmd: &str) {
+    pub async fn handle(&self, ctx: &AppContext<'_>, interaction: Option<&Interaction>, cmd: &str) {
+
+        let img = ctx.bot.reactions.get(ReactionType::WhatAreYouDoing);
 
         println!("Command '{}' threw an error '{:?}':\n", cmd, self);
 
@@ -87,10 +98,10 @@ impl Error {
             match val {
                 Interaction::Ping(_) => return,
                 Interaction::ApplicationCommand(command) => {
-                    match command.create_interaction_response(&ctx.http, |t| {
+                    match command.create_interaction_response(&ctx.api.http, |t| {
                         t.kind(InteractionResponseType::ChannelMessageWithSource)
                             .interaction_response_data(|message|
-                                message.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                                message.content(format!("There was an error processing your request, it has been sent to the bot maintenance team. {}", img))
                                     .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
                     }).await {
                         Ok(_) => notified_user = true,
@@ -98,10 +109,10 @@ impl Error {
                     }
                 },
                 Interaction::MessageComponent(message) => {
-                    match message.create_interaction_response(&ctx.http, |t| {
+                    match message.create_interaction_response(&ctx.api.http, |t| {
                         t.kind(InteractionResponseType::ChannelMessageWithSource)
                             .interaction_response_data(|message|
-                                message.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                                message.content(format!("There was an error processing your request, it has been sent to the bot maintenance team. {}", img))
                                     .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL))
                     }).await {
                         Ok(_) => notified_user = true,
@@ -116,8 +127,8 @@ impl Error {
                     Interaction::Ping(_) => return,
                     Interaction::ApplicationCommand(command) => {
                         // If the first method fails, try to DM them
-                        match command.user.direct_message(&ctx.http, |test| {
-                            test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                        match command.user.direct_message(&ctx.api.http, |msg| {
+                            msg.content(format!("There was an error processing your request, it has been sent to the bot maintenance team. {}", img))
                         }).await {
                             Ok(_) => notified_user = true,
                             Err(e) => println!("Failed to notify user via DM! {}", e)
@@ -125,8 +136,8 @@ impl Error {
                     }
                     Interaction::MessageComponent(message) => {
                         // If the first method fails, try to DM them
-                        match message.user.direct_message(&ctx.http, |test| {
-                            test.content("There was an error processing your request, it has been sent to the bot maintenance team.")
+                        match message.user.direct_message(&ctx.api.http, |msg| {
+                            msg.content(format!("There was an error processing your request, it has been sent to the bot maintenance team. {}", img))
                         }).await {
                             Ok(_) => notified_user = true,
                             Err(e) => println!("Failed to notify user via DM! {}", e)
@@ -137,9 +148,9 @@ impl Error {
             }
         }
 
-        match ctx.http.get_user(130173614702985216).await {
+        match ctx.api.http.get_user(130173614702985216).await {
             Ok(user) => {
-                match user.direct_message(&ctx.http, |message| {
+                match user.direct_message(&ctx.api.http, |message| {
                     message.content(format!("Command '{}' threw an error ```{:?}```\nNotified User: {}", cmd, self, notified_user))
                 }).await {
                     Ok(_) => {}

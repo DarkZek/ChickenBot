@@ -40,6 +40,7 @@ use crate::commands::meme::MemesCommand;
 use crate::commands::summarize::SummarizeCommand;
 use crate::db::{establish_connection, get_server};
 use crate::presence::PresenceMessage;
+use crate::reactions::Reactions;
 use crate::settings::Settings;
 
 pub mod commands;
@@ -48,6 +49,7 @@ pub mod settings;
 pub mod error;
 pub mod presence;
 pub mod db;
+pub mod reactions;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -57,7 +59,8 @@ pub struct ChickenBot {
     commands: Vec<Box<dyn Command>>,
     presence_loop_running: AtomicBool,
     guild_count: Arc<Mutex<usize>>,
-    connection: Pool<ConnectionManager<PgConnection>>
+    connection: Pool<ConnectionManager<PgConnection>>,
+    reactions: Reactions
 }
 
 impl ChickenBot {
@@ -66,7 +69,8 @@ impl ChickenBot {
             commands: ChickenBot::load_commands().await,
             presence_loop_running: AtomicBool::new(false),
             guild_count: Arc::new(Mutex::new(0)),
-            connection
+            connection,
+            reactions: Reactions::load().await
         }
     }
 

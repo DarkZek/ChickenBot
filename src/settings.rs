@@ -36,7 +36,7 @@ impl Settings {
             Err(e) => {
                 println!("Error reading settings.json {}. Using default settings", e);
                 SETTINGS.set(Settings {
-                    prefix: ">".parse().unwrap(),
+                    prefix: ">".to_string(),
                     message_prefix: "Brawk! ".to_string(),
                     changelog_url: "https://api.github.com/repos/DarkZek/ChickenBot/commits".to_string(),
                     repo_url: "https://github.com/DarkZek/ChickenBot".to_string(),
