@@ -5,13 +5,15 @@ use crate::db::schema::servers;
 pub struct Server {
     pub id: i64,
     pub banter: bool,
+    pub distance_conversion: bool,
 }
 
 impl Server {
     pub fn new(id: i64) -> Server {
         Server {
             id,
-            banter: false
+            banter: true,
+            distance_conversion: true
         }
     }
 }

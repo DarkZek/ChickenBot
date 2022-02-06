@@ -30,10 +30,10 @@ use serenity::model::id::GuildId;
 use serenity::model::prelude::OnlineStatus;
 use tokio::time::Duration;
 use crate::commands::banter::BanterCommand;
-use crate::commands::chat::ChatCommand;
 
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
+use crate::commands::distance_conversion::DistanceConversionCommand;
 use crate::commands::dong::DongCommand;
 use crate::commands::help::HelpCommand;
 use crate::commands::meme::MemesCommand;
@@ -76,7 +76,7 @@ impl ChickenBot {
             Box::new(MemesCommand::new().await.unwrap()),
             Box::new(DongCommand::new().await.unwrap()),
             Box::new(SummarizeCommand::new().await.unwrap()),
-            Box::new(ChatCommand::new().await.unwrap()),
+            Box::new(DistanceConversionCommand::new().await.unwrap()),
             Box::new(BanterCommand::new().await.unwrap()),
         ];
 

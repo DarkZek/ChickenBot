@@ -19,6 +19,7 @@ pub mod dong;
 pub mod summarize;
 pub mod banter;
 pub mod chat;
+pub mod distance_conversion;
 
 impl ChickenBot {
 

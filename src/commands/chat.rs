@@ -6,7 +6,7 @@ use serenity::model::channel::Message;
 use crate::error::Error;
 
 /*
- * Created by Marshall Scott on 8/01/22.
+ * Created by Marshall Scott on 6/02/22.
  */
 
 lazy_static! {
@@ -37,7 +37,7 @@ impl Command for ChatCommand {
 
         let response = Self::get_response(&message.content).await?;
 
-        message.reply(&ctx.api.http, "Yeet").await?;
+        message.reply(&ctx.api.http, response).await?;
 
         Ok(())
     }

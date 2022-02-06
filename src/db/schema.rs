@@ -1,6 +1,7 @@
 table! {
     servers (id) {
-        id -> BigInt,
+        id -> Int8,
         banter -> Bool,
+        distance_conversion -> Bool,
     }
 }
