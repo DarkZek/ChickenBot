@@ -30,6 +30,7 @@ use serenity::model::id::GuildId;
 use serenity::model::prelude::OnlineStatus;
 use tokio::time::Duration;
 use crate::commands::banter::BanterCommand;
+use crate::commands::chat::ChatCommand;
 
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
@@ -75,6 +76,7 @@ impl ChickenBot {
             Box::new(MemesCommand::new().await.unwrap()),
             Box::new(DongCommand::new().await.unwrap()),
             Box::new(SummarizeCommand::new().await.unwrap()),
+            Box::new(ChatCommand::new().await.unwrap()),
             Box::new(BanterCommand::new().await.unwrap()),
         ];
 
@@ -103,7 +105,6 @@ impl EventHandler for ChickenBot {
     }
 
     async fn cache_ready(&self, ctx: Context, guilds: Vec<GuildId>) {
-        println!("Cache built successfully!");
 
         *self.guild_count.lock().unwrap() = guilds.len();
 
@@ -141,6 +142,10 @@ impl EventHandler for ChickenBot {
 
 #[tokio::main]
 async fn main() {
+
+    if let Err(_) = env::var("CLEVERBOT_KEY") {
+        println!("Warn: CLEVERBOT_KEY not set");
+    }
 
     let connection = establish_connection();
 

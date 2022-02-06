@@ -18,6 +18,7 @@ pub mod meme;
 pub mod dong;
 pub mod summarize;
 pub mod banter;
+pub mod chat;
 
 impl ChickenBot {
 
