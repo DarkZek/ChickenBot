@@ -20,6 +20,7 @@ pub mod summarize;
 pub mod banter;
 pub mod chat;
 pub mod distance_conversion;
+pub mod settings;
 
 impl ChickenBot {
 
@@ -52,39 +53,61 @@ impl ChickenBot {
 
         let context = AppContext { api: ctx, bot: self };
 
-        if let Interaction::ApplicationCommand(command) = &interaction {
-            for possible_command in &self.commands {
-                if possible_command.info().code == command.data.name {
+        match &interaction {
+            Interaction::Ping(_) => {}
+            Interaction::ApplicationCommand(command) => {
+                for possible_command in &self.commands {
+                    if possible_command.info().code == command.data.name {
 
-                    // Run command
-                    match possible_command.triggered(&context, command).await {
-                        Ok(_) => {}
-                        Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
+                        // Run command
+                        match possible_command.triggered(&context, command).await {
+                            Ok(_) => {}
+                            Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
+                        }
+
+                        return
                     }
-
-                    return
                 }
+
+                Other(format!("No handler found for command: {:?}", command)).handle( &context, Some(&interaction), &command.data.name.clone()).await;
             }
+            Interaction::MessageComponent(message) => {
+                for possible_command in &self.commands {
 
-            Other(format!("No handler found for command: {:?}", command)).handle( &context, Some(&interaction), &command.data.name.clone()).await;
+                    // Check if button starts with route to this command
+                    if message.data.custom_id.starts_with(&format!("_{}", possible_command.info().code)) {
+                        // Run command
+                        match possible_command.button_clicked(&context, message).await {
+                            Ok(_) => {}
+                            Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
+                        }
 
-        } else if let Interaction::MessageComponent(message) = &interaction {
-            for possible_command in &self.commands {
-
-                // Check if button starts with route to this command
-                if message.data.custom_id.starts_with(&format!("_{}", possible_command.info().code)) {
-                    // Run command
-                    match possible_command.button_clicked(&context, message).await {
-                        Ok(_) => {}
-                        Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
+                        return
                     }
-
-                    return
                 }
-            }
 
-            Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &context, Some(&interaction), &message.data.custom_id.clone()).await;
+                Other(format!("No command found for message component event: {:?}", message.data.custom_id)).handle( &context, Some(&interaction), &message.data.custom_id.clone()).await;
+            }
+            Interaction::Autocomplete(autocomplete) => {
+                for possible_command in &self.commands {
+                    // Check if button starts with route to this command
+                    if possible_command.info().code == autocomplete.data.name {
+                        // Run command
+                        match possible_command.autocomplete(&context, autocomplete).await {
+                            Ok(_) => {}
+                            Err(e) => e.handle(&context, Some(&interaction), &possible_command.info().name).await
+                        }
+
+                        return
+                    }
+                }
+
+                Other(format!("No command found for autocomplete event: {:?}", autocomplete.data.name)).handle( &context, Some(&interaction), &autocomplete.data.name.clone()).await;
+            }
         }
+
+        if let Interaction::ApplicationCommand(command) = &interaction {
+        } else if let Interaction::MessageComponent(message) = &interaction {}
     }
 
     pub async fn register_commands(&self, ctx: &Context) {

@@ -37,6 +37,7 @@ use crate::commands::distance_conversion::DistanceConversionCommand;
 use crate::commands::dong::DongCommand;
 use crate::commands::help::HelpCommand;
 use crate::commands::meme::MemesCommand;
+use crate::commands::settings::SettingsCommand;
 use crate::commands::summarize::SummarizeCommand;
 use crate::db::{establish_connection, get_server};
 use crate::presence::PresenceMessage;
@@ -82,6 +83,7 @@ impl ChickenBot {
             Box::new(SummarizeCommand::new().await.unwrap()),
             Box::new(DistanceConversionCommand::new().await.unwrap()),
             Box::new(BanterCommand::new().await.unwrap()),
+            Box::new(SettingsCommand::new().await.unwrap()),
         ];
 
         if env::var("DEV").is_ok() {
@@ -119,6 +121,7 @@ impl EventHandler for ChickenBot {
             let ctx1 = Arc::clone(&ctx);
             let guilds_mutex = Arc::clone(&self.guild_count);
 
+            // Spawn tokio thread that just changes presence every 5 minutes
             tokio::spawn(async move {
 
                 let presence = PresenceMessage::new().await;
