@@ -3,6 +3,7 @@ use serenity::model::prelude::application_command::ApplicationCommandInteraction
 use async_trait::async_trait;
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::channel::Message;
+use serenity::model::interactions::autocomplete::AutocompleteInteraction;
 use serenity::model::prelude::message_component::MessageComponentInteraction;
 use crate::ChickenBot;
 use crate::error::Error;
@@ -29,6 +30,7 @@ pub trait Command : Sync + Send {
     fn parameters(&self, command: &mut CreateApplicationCommand) {}
     async fn triggered(&self, ctx: &AppContext, command: &ApplicationCommandInteraction) -> Result<(), Error> { Ok(()) }
     async fn button_clicked(&self, ctx: &AppContext, message: &MessageComponentInteraction) -> Result<(), Error> { Ok(()) }
+    async fn autocomplete(&self, ctx: &AppContext, command: &AutocompleteInteraction) -> Result<(), Error> { Ok(()) }
     async fn message(&self, ctx: &AppContext, message: &Message) -> Result<(), Error> { Ok(()) }
     fn shutdown(&self) {}
     async fn new() -> Result<Self, Error> where Self: Sized;
