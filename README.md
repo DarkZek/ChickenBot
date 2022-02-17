@@ -23,6 +23,9 @@ For SQL work install the diesel-rs CLI, to make database changes you should add 
 
 This repository is a personal, non-professionally driven project created and maintained by [Marshall Scott](https://marshalldoes.tech/). Because of this ongoing support is not guaranteed. 
 
+Chatbot Functionality Repository: https://huggingface.co/darkzek/chickenbot-jon-snow
+https://www.freecodecamp.org/news/discord-ai-chatbot/ Is used for the AI talking aspects
+
 ## Contributors
 
 Thanks to all of the contributors for your efforts!

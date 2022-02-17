@@ -6,6 +6,7 @@ pub struct Server {
     pub id: i64,
     pub banter: bool,
     pub distance_conversion: bool,
+    pub summarize: bool,
 }
 
 impl Server {
@@ -13,7 +14,8 @@ impl Server {
         Server {
             id,
             banter: true,
-            distance_conversion: true
+            distance_conversion: true,
+            summarize: true,
         }
     }
 }

@@ -3,5 +3,6 @@ table! {
         id -> Int8,
         banter -> Bool,
         distance_conversion -> Bool,
+        summarize -> Bool,
     }
 }
