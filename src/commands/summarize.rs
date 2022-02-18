@@ -23,6 +23,7 @@ lazy_static! {
             .with_name("Summarize Link")
             .with_code("tldr")
             .with_description("Summarizes the last link sent in chat")
+            .with_usage("/tldr")
             .with_category(CommandCategory::Internet)
             .build();
 }

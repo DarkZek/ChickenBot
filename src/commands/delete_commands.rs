@@ -14,6 +14,7 @@ lazy_static! {
             .with_name("Delete Commands")
             .with_code("delete_commands")
             .with_description("Deletes all global commands for the bot")
+            .with_usage("/delete_commands")
             .with_category(CommandCategory::Administration)
             .with_allow_bots(true)
             .build();

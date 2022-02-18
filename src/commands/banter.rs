@@ -17,6 +17,7 @@ lazy_static! {
     static ref INFO: CommandInfo = CommandInfoBuilder::new()
             .with_name("Bot Banter")
             .with_description("Brawls with other bots")
+            .with_usage("/settings set banter: Enable")
             .with_category(CommandCategory::Fun)
             .build();
 }

@@ -14,6 +14,7 @@ lazy_static! {
     static ref INFO: CommandInfo = CommandInfoBuilder::new()
             .with_name("Chat")
             .with_description("Chats with humans")
+            .with_usage("Say 11cm")
             .with_category(CommandCategory::Fun)
             .build();
 }

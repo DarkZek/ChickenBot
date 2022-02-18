@@ -18,6 +18,7 @@ lazy_static! {
             .with_name("Meme Me")
             .with_code("meme")
             .with_description("Fetches the hottest new memes straight from the source, iFunny")
+            .with_usage("/meme")
             .with_category(CommandCategory::Fun)
             .build();
 }

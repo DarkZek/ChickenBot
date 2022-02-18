@@ -30,6 +30,7 @@ use serenity::model::id::GuildId;
 use serenity::model::prelude::OnlineStatus;
 use tokio::time::Duration;
 use crate::commands::banter::BanterCommand;
+use crate::commands::chat::ChatCommand;
 
 use crate::commands::command::Command;
 use crate::commands::delete_commands::DeleteCommandsCommand;
@@ -84,6 +85,7 @@ impl ChickenBot {
             Box::new(DistanceConversionCommand::new().await.unwrap()),
             Box::new(BanterCommand::new().await.unwrap()),
             Box::new(SettingsCommand::new().await.unwrap()),
+            Box::new(ChatCommand::new().await.unwrap()),
         ];
 
         if env::var("DEV").is_ok() {
@@ -150,8 +152,8 @@ impl EventHandler for ChickenBot {
 #[tokio::main]
 async fn main() {
 
-    if let Err(_) = env::var("CLEVERBOT_KEY") {
-        println!("Warn: CLEVERBOT_KEY not set");
+    if let Err(_) = env::var("HUGGINGFACE_TOKEN") {
+        println!("Warn: HUGGINGFACE_TOKEN not set");
     }
 
     let connection = establish_connection();

@@ -16,6 +16,7 @@ lazy_static! {
             .with_name("Do Online Now Guys")
             .with_code("dong")
             .with_description("Fetches a random website to cure boredom")
+            .with_usage("/dong")
             .with_category(CommandCategory::Fun)
             .build();
 }
