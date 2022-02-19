@@ -32,9 +32,11 @@ impl Command for ChatCommand {
 
         let user_id = ctx.api.cache.current_user().await.id;
 
-        // Don't respond if theres an @everyone or they're not a bot and it's in a guild
-        if (!message.mentions_user_id(user_id) && (message.referenced_message.is_some() && message.referenced_message.as_ref().unwrap().author.id != user_id ))
-            || message.author.bot || user_id == message.author.id  {
+        if message.author.bot || user_id == message.author.id {
+            return Ok(())
+        }
+
+        if !(message.mentions_user_id(user_id) || (message.referenced_message.is_some() && message.referenced_message.as_ref().unwrap().author.id == user_id )) || message.referenced_message.is_none() {
 
             let index = rand::thread_rng().gen_range(0, 100);
 
@@ -44,7 +46,7 @@ impl Command for ChatCommand {
             }
         }
 
-        let t = message.channel_id.start_typing(&ctx.api.http)?;
+        let typing = message.channel_id.start_typing(&ctx.api.http)?;
 
         let content = message.content.replace(&format!("<@!{}>", user_id), "");
 
@@ -66,6 +68,7 @@ impl Command for ChatCommand {
             // You're a failure AI
             if text.len() > 100 {
                 println!("AI Returned too long value: `{}`", text);
+                typing.stop();
                 return Ok(())
             }
             message.reply(&ctx.api.http, &text).await?;

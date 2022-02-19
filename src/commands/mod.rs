@@ -105,9 +105,6 @@ impl ChickenBot {
                 Other(format!("No command found for autocomplete event: {:?}", autocomplete.data.name)).handle( &context, Some(&interaction), &autocomplete.data.name.clone()).await;
             }
         }
-
-        if let Interaction::ApplicationCommand(command) = &interaction {
-        } else if let Interaction::MessageComponent(message) = &interaction {}
     }
 
     pub async fn register_commands(&self, ctx: &Context) {

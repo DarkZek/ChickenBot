@@ -1,10 +1,9 @@
-use std::env;
 use crate::commands::command::{Command, CommandInfoBuilder, CommandInfo, CommandCategory, AppContext};
 use async_trait::async_trait;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use lazy_static::lazy_static;
 use serenity::builder::CreateApplicationCommand;
-use serenity::model::interactions::application_command::{ApplicationCommandInteraction, ApplicationCommandInteractionDataOption, ApplicationCommandOptionType};
+use serenity::model::interactions::application_command::{ApplicationCommandInteraction, ApplicationCommandOptionType};
 use serenity::model::prelude::InteractionApplicationCommandCallbackDataFlags;
 use crate::db::schema::servers::dsl::servers;
 use crate::db::schema::servers::{banter, distance_conversion, id};
@@ -84,21 +83,33 @@ impl Command for SettingsCommand {
             return Ok(());
         }
 
+        if !command.member.as_ref().unwrap().permissions(&ctx.api).await?.administrator() {
+            command.create_interaction_response(&ctx.api.http, |interaction| {
+                interaction.interaction_response_data(|data| {
+                    data.content("This command can only be ran by administrators").flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
+                })
+            }).await?;
+        }
+
         let guild_id = *command.guild_id.unwrap().as_u64();
 
         let mut connection = ctx.bot.connection.get()?;
 
         let subcommand = command.data.options.get(0).unwrap();
 
+        let mut changed_values = Vec::new();
+
         if subcommand.name == "set" {
             for option in &subcommand.options {
                 match option.name.as_str() {
                     "banter" => {
-                        let value = option.value.as_ref().unwrap().to_string().as_str() == "true";
+                        let value = option.value.as_ref().unwrap().as_str().unwrap_or("false").eq("true");
 
                         diesel::update(servers)
                             .filter(id.eq(guild_id as i64))
                             .set(banter.eq(value)).execute(&connection)?;
+
+                        changed_values.push("banter");
                     }
                     "distance_conversion" => {
                         let value = option.value.as_ref().unwrap().to_string().as_str() == "true";
@@ -106,6 +117,8 @@ impl Command for SettingsCommand {
                         diesel::update(servers)
                             .filter(id.eq(guild_id as i64))
                             .set(distance_conversion.eq(value)).execute(&connection)?;
+
+                        changed_values.push("distance_conversion");
                     }
                     _ => {}
                 }
@@ -113,13 +126,13 @@ impl Command for SettingsCommand {
 
             command.create_interaction_response(&ctx.api.http, |interaction| {
                 interaction.interaction_response_data(|data| {
-                    data.content("Successfully updated guild settings").flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
+                    data.content(format!("Successfully updated guild settings {:?}", changed_values)).flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
                 })
             }).await?;
 
         } else {
 
-            let mut val = false;
+            let mut val;
 
             let server = get_server(guild_id, &mut *connection)?;
 

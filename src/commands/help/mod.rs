@@ -48,7 +48,7 @@ impl Command for HelpCommand {
 
     async fn button_clicked(&self, ctx: &AppContext, message: &MessageComponentInteraction) -> Result<(), Error> {
 
-        let mut page = 0;
+        let mut page ;
 
         if let Some(val) = message.data.custom_id.split("_").collect::<Vec<&str>>().get(3) {
             if let Ok(val) = val.parse::<usize>() {
@@ -65,12 +65,14 @@ impl Command for HelpCommand {
         let start = page * self.items_per_page as usize;
         let end = ((page + 1) * self.items_per_page as usize).clamp(0, ctx.bot.commands.len() as usize);
 
+        let embed = Self::list_commands_embed(ctx, start, end).await;
+
         message.create_interaction_response(&ctx.api.http, |response| {
             response
                 .kind(InteractionResponseType::UpdateMessage)
                 .interaction_response_data(|message| {
                     message
-                        .add_embed(Self::list_commands_embed(ctx, start, end))
+                        .add_embed(embed)
                         .set_components(Self::list_commands_buttons(ctx, start, end, page))
                         .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
                 })
@@ -89,12 +91,14 @@ impl Command for HelpCommand {
                 let start = page * self.items_per_page as usize;
                 let end = ((page + 1) * self.items_per_page as usize).clamp(0, ctx.bot.commands.len() as usize);
 
+                let embed = Self::list_commands_embed(ctx, start, end).await;
+
                 command.create_interaction_response(&ctx.api.http, |response| {
                     response
                         .kind(InteractionResponseType::ChannelMessageWithSource)
                         .interaction_response_data(|message| {
                             message
-                                .add_embed(Self::list_commands_embed(ctx, start, end))
+                                .add_embed(embed)
                                 .set_components(Self::list_commands_buttons(ctx, start, end, page))
                                 .flags(InteractionApplicationCommandCallbackDataFlags::EPHEMERAL)
                         })
@@ -162,11 +166,17 @@ impl Command for HelpCommand {
 
 impl HelpCommand {
 
-    fn list_commands_embed(ctx: &AppContext, start: usize, end: usize) -> CreateEmbed {
+    async fn list_commands_embed(ctx: &'_ AppContext<'_>, start: usize, end: usize) -> CreateEmbed {
         let mut embed = CreateEmbed::default();
+
+        embed.title(format!("Chicken Bot v{}", env!("CARGO_PKG_VERSION")));
 
         for cmd in &ctx.bot.commands[start..end] {
             embed.field(format!("{} ({})", &cmd.info().name, &cmd.info().usage), &cmd.info().description, false);
+        }
+
+        if let Ok(user) = ctx.api.http.get_user(SETTINGS.get().unwrap().user_manager).await {
+            embed.footer(|t| t.text(format!("Made by {}#{:04}", user.name, user.discriminator)));
         }
 
         embed
